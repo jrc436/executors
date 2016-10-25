@@ -1,5 +1,7 @@
 package util.listdata;
 
+import java.io.File;
+
 import util.sys.FileProcessor;
 
 public class ExtractHeadersProcessor extends FileProcessor<UserList, HeaderList> {
@@ -26,7 +28,11 @@ public class ExtractHeadersProcessor extends FileProcessor<UserList, HeaderList>
 
 	@Override
 	public UserList getNextData() {
-		return UserList.createFromFile(super.getNextFile());
+		File f = super.getNextFile();
+		if (f == null) {
+			return null;
+		}
+		return UserList.createFromFile(f);
 	}
 
 	@Override
