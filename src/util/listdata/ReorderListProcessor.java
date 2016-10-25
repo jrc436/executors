@@ -96,12 +96,12 @@ public class ReorderListProcessor {
 //			}
 //			return colHasData;
 //		}
-		private static void renumber(List<FileParts> fp,  File outputDirectory) {
-			for (int i = 0; i < fp.size(); i++) {
-				fp.get(i).fileNum = i;
-			}
-			addRepaths(outputDirectory, fp, null);
-		}
+//		private static void renumber(List<FileParts> fp,  File outputDirectory) {
+//			for (int i = 0; i < fp.size(); i++) {
+//				fp.get(i).fileNum = i;
+//			}
+//			addRepaths(outputDirectory, fp, null);
+//		}
 		private static List<FileParts> rebase(File inputDirectory, File outputDirectory, String rebase) {
 			List<FileParts> fp = captureAll(inputDirectory);
 			Collections.sort(fp, FileParts.getFileNumComparator());
@@ -145,7 +145,7 @@ public class ReorderListProcessor {
 	
 	
 	public static void main(String[] args) throws IOException {
-		if (args.length < 2) {
+		if (args.length < 1) {
 			System.err.println("Specify inputDirectory first, and whether the files also need their headers fixed / is a broken DataCollection (true or false)");
 			System.err.println("Optionally, the third argument would be a non-default output directory, and the fourth would be a new basename");
 			System.exit(1);
