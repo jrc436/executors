@@ -39,8 +39,6 @@ public class Executor<J extends FileProcessor<K, V>, K extends DataType, V exten
 			System.err.println("To use Line Executors, the first arg should be -n");
 			System.err.println("The second arg should be the number of input files that, in their processed form, can be readily stored in memory of a single thread.");
 		}
-		InputParse ip = new InputParse(cmdArgs);
-		InputProcessor<J, K, V> ipr = new InputProcessor<J, K, V>(fp, in, out, ip);	
 		int maxNumInputs = 0;
 		if (cmdArgs[0].equals("-n")) {
 			try {
@@ -58,6 +56,8 @@ public class Executor<J extends FileProcessor<K, V>, K extends DataType, V exten
 			cmdArgs = newArgs;
 		}
 		this.maxNumInputs = maxNumInputs;
+		InputParse ip = new InputParse(cmdArgs);
+		InputProcessor<J, K, V> ipr = new InputProcessor<J, K, V>(fp, in, out, ip);	
 		if (cmdArgs.length < 2) {
 			ipr.createError();
 		}
