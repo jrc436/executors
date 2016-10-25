@@ -84,7 +84,7 @@ public abstract class Filter {
 //		for (FilterEnum fe : FilterEnum.values()) {
 //			toReturn += fe.toString() + "; ";
 //		}
-		return toReturn + " Any fully qualified class name extending wordtracer.Filter";
+		return toReturn + " Any fully qualified class name extending filter.Filter";
 	}
 	enum FilterEnum {
 		lex,
