@@ -7,9 +7,12 @@ import util.sys.DataType;
 
 public class HeaderList extends ArrayList<String> implements DataType {
 
-	/**
-	 * 
-	 */
+	public HeaderList() {
+		super();
+	}
+	public HeaderList(HeaderList other) {
+		super(other);
+	}
 	private static final long serialVersionUID = -803974506259550847L;
 
 	@Override
@@ -54,7 +57,7 @@ public class HeaderList extends ArrayList<String> implements DataType {
 
 	@Override
 	public DataType deepCopy() {
-		return null;
+		return new HeaderList(this);
 	}
 
 }

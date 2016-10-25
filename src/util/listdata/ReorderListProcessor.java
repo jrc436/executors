@@ -17,132 +17,45 @@ import java.util.List;
  *
  */
 public class ReorderListProcessor {
-	
-//	public enum Operation {
-//		FixNamesOnly,
-//		DataCollectionHeaders,
-//		PruneCSV;
-//		public static Operation fromString(String s) {
-//			for (Operation o : Operation.values()) {
-//				if (o.toString().equalsIgnoreCase(s)) {
-//					return o;
-//				}
-//			}
-//			return null;
-//		}
-//		public static void runOperation(Operation op, File inputDirectory, File outputDirectory, String rebase) {
-//			switch (op) {
-//				case DataCollectionHeaders:
-//					fixDataCollection(inputDirectory, outputDirectory, rebase);
-//					break;
-//				case FixNamesOnly:
-//					fixFileNames(inputDirectory, outputDirectory, rebase);
-//					break;
-//				case PruneCSV:
-//					pruneCSV(inputDirectory, outputDirectory, rebase);
-//					break;
-//				default:
-//					System.err.println("Operation not supported. Please check the name is correct. Valid operations include:");
-//					System.err.println(Operation.values());
-//					break;
-//			}
-//		}
-//		private static void pruneCSV(File inputDirectory, File outputDirectory, String rebase) {
-//			List<FileParts> fp = rebase(inputDirectory, outputDirectory, rebase);
-//			int[] colsData = prune(fp); 
-//			renumber(fp, outputDirectory);
-//			for (FileParts f : fp) {
-//				f.readFile();
-//				for (int i = 1; i < f.lines.size(); i++) {
-//					String newLine = "";
-//					String[] lineParts = f.lines.get(i).split(",");
-//					for (int j = 0; j < lineParts.length; j++) {
-//						if (colsData[j] > 0) {
-//							newLine += lineParts[j]+",";
-//						}
-//					}
-//					f.lines.set(i, newLine.substring(0, newLine.length()-1));
-//				}
-//				f.writeFile();
-//				f.clean();
-//			}
-//		}
-//		private static int[] prune(List<FileParts> fp) {
-//			fp.get(0).readFile();
-//			int columns = fp.get(0).lines.get(0).split(",").length;
-//			List<FileParts> prune = new ArrayList<FileParts>();
-//			int[] colHasData = new int[columns];
-//			for (FileParts f : fp) {
-//				f.readFile();
-//				for (int j = 1; j < f.lines.size(); j++) {
-//					String line = f.lines.get(j);
-//					String[] parts = line.split(",");
-//					boolean rowHasData = false;
-//					//first line will always be the header...
-//					for (int i = 0; i < parts.length; i++) {
-//						if (!parts[i].equals("null") && !parts[i].equals("0")) {
-//							colHasData[i]++;
-//							rowHasData = true;
-//						}
-//					}
-//					if (!rowHasData) {
-//						prune.add(f);
-//					}
-//				}
-//				f.clean();
-//			}
-//			for (FileParts f : prune) {
-//				fp.remove(f);
-//			}
-//			return colHasData;
-//		}
-//		private static void renumber(List<FileParts> fp,  File outputDirectory) {
-//			for (int i = 0; i < fp.size(); i++) {
-//				fp.get(i).fileNum = i;
-//			}
-//			addRepaths(outputDirectory, fp, null);
-//		}
-		private static List<FileParts> rebase(File inputDirectory, File outputDirectory, String rebase) {
-			List<FileParts> fp = captureAll(inputDirectory);
-			Collections.sort(fp, FileParts.getFileNumComparator());
-			fp.get(0).readFile();
-			System.err.println(fp.get(0).toString());
-			outputDirectory.mkdirs();
-			addRepaths(outputDirectory, fp, rebase);
-			return fp;
-		}
-		public static void fixDataCollection(File inputDirectory, File outputDirectory, String rebase) {
-			List<FileParts> fp = rebase(inputDirectory, outputDirectory, rebase);
-			String lastKeyLine = "";
-			for (String s : fp.get(0).lines) { 
-				if (DataCollection.isKeyLine(s)) {
-					lastKeyLine = s;
-				}
-			}
-			String lastNewKeyLine = lastKeyLine;
-			String fileResponsible = fp.get(0).toString();
-			for (FileParts f : fp) {
-				System.err.println("Fixing:" + f.toString()+", using: "+fileResponsible);
-				f.readFile();
-				lastKeyLine = altFix(f.lines, lastKeyLine);
-				if (!lastNewKeyLine.equals(lastKeyLine)) {
-					fileResponsible = f.toString();
-				}
-				lastNewKeyLine = lastKeyLine;
-				f.writeFile();
-				f.clean();
+	private static List<FileParts> rebase(File inputDirectory, File outputDirectory, String rebase) {
+		List<FileParts> fp = captureAll(inputDirectory);
+		Collections.sort(fp, FileParts.getFileNumComparator());
+		fp.get(0).readFile();
+		System.err.println(fp.get(0).toString());
+		outputDirectory.mkdirs();
+		addRepaths(outputDirectory, fp, rebase);
+		return fp;
+	}
+	public static void fixDataCollection(File inputDirectory, File outputDirectory, String rebase) {
+		List<FileParts> fp = rebase(inputDirectory, outputDirectory, rebase);
+		String lastKeyLine = "";
+		for (String s : fp.get(0).lines) { 
+			if (DataCollection.isKeyLine(s)) {
+				lastKeyLine = s;
 			}
 		}
-		public static void fixFileNames(File inputDirectory, File outputDirectory, String rebase) {
-			List<FileParts> fp = rebase(inputDirectory, outputDirectory, rebase);
-			for (FileParts f : fp) {
-				f.readFile();
-				f.writeFile();
-				f.clean();
+		String lastNewKeyLine = lastKeyLine;
+		String fileResponsible = fp.get(0).toString();
+		for (FileParts f : fp) {
+			System.err.println("Fixing:" + f.toString()+", using: "+fileResponsible);
+			f.readFile();
+			lastKeyLine = altFix(f.lines, lastKeyLine);
+			if (!lastNewKeyLine.equals(lastKeyLine)) {
+				fileResponsible = f.toString();
 			}
+			lastNewKeyLine = lastKeyLine;
+			f.writeFile();
+			f.clean();
 		}
-//	}
-	
+	}
+	public static void fixFileNames(File inputDirectory, File outputDirectory, String rebase) {
+		List<FileParts> fp = rebase(inputDirectory, outputDirectory, rebase);
+		for (FileParts f : fp) {
+			f.readFile();
+			f.writeFile();
+			f.clean();
+		}
+	}
 	
 	public static void main(String[] args) throws IOException {
 		if (args.length < 1) {
@@ -151,10 +64,8 @@ public class ReorderListProcessor {
 			System.exit(1);
 		}
 		File inputDirectory = new File(args[0]);
-//		Operation op = Operation.fromString(args[1]);
 		File outputDirectory = args.length > 2 ?  new File(args[2]) : inputDirectory.getParentFile().toPath().resolve(inputDirectory.getName()+"-f").toFile();
 		String rebase = args.length > 2 ? args[2] : null;
-		//Operation.runOperation(op, inputDirectory, outputDirectory, rebase);
 		try {
 			fixDataCollection(inputDirectory, outputDirectory, rebase);
 		}
