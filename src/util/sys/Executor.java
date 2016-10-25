@@ -19,6 +19,7 @@ public class Executor<J extends FileProcessor<K, V>, K extends DataType, V exten
 	private final Class<K> in;
 	private final Class<J> fp;
 	private final Class<V> out;
+	private int maxNumInputs;
 	private J proc;
 	public Executor(String name, int gbPerThread, Class<J> fp, Class<K> inp, Class<V> out) {
 		this.name = name;
@@ -33,8 +34,30 @@ public class Executor<J extends FileProcessor<K, V>, K extends DataType, V exten
 			System.err.println("All Executors of any sort require the input and output directories.");
 			System.exit(1);
 		}
+		if (cmdArgs.length < 4 || !cmdArgs[0].equals("-n")) {
+			System.err.println("Warning: ProcessExecutors will be used. If you are running into memory issues, try using LineExecutors");
+			System.err.println("To use Line Executors, the first arg should be -n");
+			System.err.println("The second arg should be the number of input files that, in their processed form, can be readily stored in memory of a single thread.");
+		}
 		InputParse ip = new InputParse(cmdArgs);
-		InputProcessor<J, K, V> ipr = new InputProcessor<J, K, V>(fp, in, out, ip);
+		InputProcessor<J, K, V> ipr = new InputProcessor<J, K, V>(fp, in, out, ip);	
+		int maxNumInputs = 0;
+		if (cmdArgs[0].equals("-n")) {
+			try {
+				maxNumInputs = Integer.parseInt(cmdArgs[1]);
+			}
+			catch (NumberFormatException nfe) {
+				System.err.println(cmdArgs[1] + " is not a parsable number to use as the max number of inputs");
+				nfe.printStackTrace();
+				System.exit(1);
+			}
+			String[] newArgs = new String[cmdArgs.length-2];
+			for (int i = 2; i < cmdArgs.length; i++) {
+				newArgs[i-2] = cmdArgs[i];
+			}
+			cmdArgs = newArgs;
+		}
+		this.maxNumInputs = maxNumInputs;
 		if (cmdArgs.length < 2) {
 			ipr.createError();
 		}
@@ -102,8 +125,7 @@ public class Executor<J extends FileProcessor<K, V>, K extends DataType, V exten
 	
 	
 	protected Executable getExecutable(int threadNum, BlockingQueue<String> messages) {//, V initialValue) {
-		//return new ProcessWorker(threadNum, gbPerThread, messages, proc, initialValue);
-		return new ProcessWorker(threadNum, messages);
+		return maxNumInputs <= 0 ? new ProcessWorker(threadNum, messages) : new LineWorker(threadNum, messages, maxNumInputs);
 	}
 	
 	//needs to be updated slightly. After N rounds of runs, N output files will be produced. 
@@ -136,34 +158,67 @@ public class Executor<J extends FileProcessor<K, V>, K extends DataType, V exten
 	    	messages.add("Writing process complete. Process will now terminate");
 	    }
 	}
-	class ProcessWorker extends Executable {
-		//private J proc;
-		//private K input;
-		//private V output;
+	private static Integer filenum = 0;
+	class LineWorker extends Executable {
 		private V threadAggregate;
-		//private final int gbAlloc;
+		private final int maxNumInps;
+		public LineWorker(int threadnum, BlockingQueue<String> log, int maxNumInputs) {
+			super(threadnum, log);
+			this.threadAggregate = proc.getInitialThreadValue();
+			this.maxNumInps = maxNumInputs;
+		}
+		private boolean tryReduce(int numInps) {
+			if (numInps > maxNumInps) {
+				synchronized(proc.processAggregate) {
+					proc.reduce(threadAggregate);
+					this.threadAggregate = proc.getInitialThreadValue();	
+					int fn = -1;
+					synchronized(filenum) {
+						fn = filenum;
+						filenum += proc.writeData(proc.processAggregate, fn);
+					}
+					proc.processAggregate = proc.getInitialThreadValue();
+				}
+				return true;
+			}
+			return false;
+		}
+		@Override
+		public void run() {
+			this.logMessage("Thread"+getNum()+" is beginning its run");
+			int numInps = 0;
+			while (true) {
+				this.logMessage("Thread"+getNum()+" is waiting to acquire another file. "+proc.numReadableRemaining()+ " files remain.");
+				K data = proc.getNextData();						
+				if (data == null) {
+					this.logMessage("Thread"+getNum()+" has failed to acquire more data. It's ending its run.");
+					break;
+				}
+				else {
+					this.logMessage("Thread"+getNum()+" has acquired more data");		
+				}
+				numInps++;
+				proc.map(data, threadAggregate);
+				if (tryReduce(numInps)) {
+					numInps = 0;
+				}
+			}
+			this.logMessage("Thread"+getNum()+" is beginning its reduce.");
+			proc.reduce(threadAggregate);
+			this.logMessage("Thread"+getNum()+" is exiting.");			
+		}
+	}
+	class ProcessWorker extends Executable {
+		private V threadAggregate;
 		public ProcessWorker(int threadnum, BlockingQueue<String> log) {//,int gbAlloc, J proc, V aggregate) {
 			super(threadnum, log);
-			//this.proc = proc;
-			//this.gbAlloc = gbAlloc;
 			this.threadAggregate = proc.getInitialThreadValue();
 		}
-//		private boolean shouldReduce() {
-//			return this.threadAggregate.isFull(gbPerThread/2);
-//		}
-//		private void reInitializeThread() {
-//			proc.reduce(threadAggregate);
-//			this.threadAggregate = proc.getInitialThreadValue();
-//		}
 		@Override
 		public void run() {
 			this.logMessage("Thread"+getNum()+" is beginning its run");
 			while (true) {
 				this.logMessage("Thread"+getNum()+" is waiting to acquire another file. "+proc.numReadableRemaining()+ " files remain.");
-//				if (shouldReduce()) {
-//					this.logMessage("Thread"+getNum()+" has exceeded its recommended size and is reducing early.");
-//					reInitializeThread();
-//				}
 				K data = proc.getNextData();						
 				if (data == null) {
 					this.logMessage("Thread"+getNum()+" has failed to acquire more data. It's ending its run.");
