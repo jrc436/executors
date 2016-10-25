@@ -37,8 +37,14 @@ public class UserList extends DataCollection<String> {
 			e.printStackTrace();
 			System.exit(1);
 		}
+		if (lines.size() == 0) {
+			System.err.println(f);
+			System.err.println("This file is empty, thus not a UserList");
+			throw new IllegalArgumentException();
+		}
 		String thisCreateLine = lines.get(0);
 		if (!isKeyLine(thisCreateLine)) {
+			System.err.println(f);
 			System.err.println("These lists have still not been 'fixed', please run ReorderListProcessor");
 			throw new IllegalArgumentException();
 		}
