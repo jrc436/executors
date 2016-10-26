@@ -55,8 +55,7 @@ public class JsonReadable extends HashMap<String, String> {
 		for (Entry<String, String> entries : this.entrySet()) {
 			ret += "\""+entries.getKey()+"\"";
 			ret += ":";
-			//ret += "\"" + entries.getValue() + "\"";
-			ret += entries.getValue();
+			ret += "\"" + entries.getValue() + "\"";
 			ret += ",";
 		}
 		ret = ret.substring(0, ret.length()-1);
