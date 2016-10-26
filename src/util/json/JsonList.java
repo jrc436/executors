@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 import util.sys.DataType;
-import util.sys.FileWritable;
 
 public class JsonList extends ArrayList<JsonReadable> implements DataType {
 	public JsonList() {
@@ -49,18 +48,29 @@ public class JsonList extends ArrayList<JsonReadable> implements DataType {
 	public String getFooterLine() {
 		return "]";
 	}
-//	@Override
-//	public boolean isFull(int gbAllocated) {
-//		return this.size() > 100000*gbAllocated;
-//	}
 	@Override
 	public boolean hasNArgs() {
-		// TODO Auto-generated method stub
 		return false;
 	}
 	@Override
 	public Iterator<String> getStringIter() {
-		return FileWritable.<JsonReadable,JsonList>iterBuilder(this);
+		JsonList outer = this;
+		return new Iterator<String>() {
+			Iterator<JsonReadable> jriter = outer.iterator(); 
+			@Override
+			public boolean hasNext() {
+				return jriter.hasNext();
+			}
+
+			@Override
+			public String next() {
+				String ret = jriter.next().toString();
+				if (hasNext()) {
+					ret += ",";
+				}
+				return ret;
+			}	
+		};
 	}
 
 }
