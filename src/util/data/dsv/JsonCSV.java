@@ -1,4 +1,4 @@
-package util.data.csv;
+package util.data.dsv;
 
 import java.util.ArrayList;
 import java.util.Iterator;

@@ -1,6 +1,6 @@
 package util.data.json;
 
-import util.data.csv.JsonCSV;
+import util.data.dsv.JsonCSV;
 import util.sys.Executor;
 
 public class CSVJsonMain extends Executor<CSVJsonProc, JsonCSV, JsonList> {

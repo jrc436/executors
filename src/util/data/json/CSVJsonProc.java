@@ -5,7 +5,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 
-import util.data.csv.JsonCSV;
+import util.data.dsv.JsonCSV;
 import util.sys.FileProcessor;
 
 public class CSVJsonProc extends FileProcessor<JsonCSV, JsonList> {

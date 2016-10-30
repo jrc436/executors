@@ -1,4 +1,4 @@
-package util.data.csv;
+package util.data.dsv;
 
 public class CSVSplitter {
 
