@@ -6,6 +6,9 @@ public class TextSplitter extends BigDataSplitter<TextList> {
 	public TextSplitter() {
 		super();
 	}
+	public TextSplitter(String input, String output) {
+		super(input, output, new TextList());
+	}
 	@Override
 	public TextList getNextData() {
 		File f = super.getNextFile();
