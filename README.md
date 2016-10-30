@@ -35,4 +35,7 @@ FileProcessors generally have to specify a constructor that takes a String repre
 the output directory, and a DataType that can serve as the initial value for the output DataType
 
 If you are actually interested in using this, but feel like you're missing something, email jrcole@psu.edu. If you feel it's too
-confusing at this time but have some advice, please also email. 
+confusing at this time but have some advice, please also email.
+
+
+Here's a link to the library files I am using. For easy setup, place these in a folder called "lib/" in the same directory as your src folder. You can import a java project from the ant buildfile.  https://www.dropbox.com/sh/i7aa3sor510my98/AADnTkI1kuM8dSOmYAmhT-OZa  
