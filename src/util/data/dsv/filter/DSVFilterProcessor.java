@@ -17,7 +17,7 @@ public class DSVFilterProcessor extends FileProcessor<ListDSV, ListDSV> {
 		this.delimiter = null;
 	}
 	public DSVFilterProcessor(String input, String output, String[] args) {
-		super(input, output, new ListDSV());
+		super(input, output, new ListDSV(args[0]));		
 		this.delimiter = args[0];
 		String column = args[1];
 		Set<String> acceptableValues = new HashSet<String>();
@@ -60,13 +60,13 @@ public class DSVFilterProcessor extends FileProcessor<ListDSV, ListDSV> {
 	@Override
 	public void map(ListDSV newData, ListDSV threadAggregate) {
 		vmf.filter(newData);
-		threadAggregate.addAll(newData);
+		threadAggregate.absorb(newData);
 	}
 
 	@Override
 	public void reduce(ListDSV threadAggregate) {
 		synchronized(processAggregate) {
-			processAggregate.addAll(threadAggregate);
+			processAggregate.absorb(threadAggregate);
 		}
 	}
 

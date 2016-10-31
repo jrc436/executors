@@ -17,11 +17,16 @@ public class ListDSV extends ArrayList<List<String>> implements Filterable<List<
 	 * 
 	 */
 	public ListDSV() {
-		headers = null;
+		super();
+		this.headers = null;
 		this.splitter = null;
 	}
+	public ListDSV(String splitter) {
+		super();
+		this.splitter = splitter;
+	}
 	private static final long serialVersionUID = -4843965415284440893L;
-	private final List<String> headers;
+	private List<String> headers;
 	private final String splitter;
 	public static ListDSV fromFile(File f, String splitter) throws IOException {
 		List<String> lines = Files.readAllLines(f.toPath());
@@ -48,11 +53,21 @@ public class ListDSV extends ArrayList<List<String>> implements Filterable<List<
 	}
 	private ListDSV(ListDSV other) {
 		super();
-		this.headers = new ArrayList<String>(other.headers);
+		this.headers = other.headers == null ? null : new ArrayList<String>(other.headers);
 		this.splitter = other.splitter;
 		for (List<String> data : other) {
 			super.add(new ArrayList<String>(data));
 		}
+	}
+	public void absorb(ListDSV other) {
+		if (this.headers == null) {
+			this.headers = new ArrayList<String>();
+			this.headers.addAll(other.headers);
+		}
+		else if (this.headers.size() != other.headers.size()) {
+			throw new IllegalArgumentException("Non-header aligned CSVs cannot be filtered using this system");
+		}
+		this.addAll(other);
 	}
 	public int getIndexForHeader(String header) {
 		for (int i = 0; i < headers.size(); i++) {

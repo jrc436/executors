@@ -1,16 +1,6 @@
-filtermap.txt
 
 *.sh
 
-data/swbd.ccg
-
-old-wordcounts/
-wordcounts/
-conflictcomments/
-test/
-modred/
-test.csv
-log.txt
 
 *.RData
 *.bash

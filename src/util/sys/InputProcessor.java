@@ -43,17 +43,18 @@ public class InputProcessor<J extends FileProcessor<K, V>, K extends DataType, V
 		if (outputOverride() && cmd[cmdI] == dOut) {
 			return processFixedArgs(start, start + dProc.overrideOutputArgs());
 		}
-		String[] nargs = cmd[cmdI].hasNArgs() ? processNArgs(start) : new String[0];
+		String[] fargs = processFixedArgs(start, start+cmd[cmdI].getNumFixedArgs());
+		String[] nargs = cmd[cmdI].hasNArgs() ? processNArgs(start+cmd[cmdI].getNumFixedArgs()) : new String[0];
 		if (cmd[cmdI].hasNArgs()) {
 			start += nargs.length+1;
 		}
-		String[] fargs = processFixedArgs(start, start+cmd[cmdI].getNumFixedArgs());
+		
 		String[] retval = new String[fargs.length + nargs.length];
-		for (int i = 0; i < nargs.length; i++) {
-			retval[i] = nargs[i];
+		for (int i = 0; i < fargs.length; i++) {
+			retval[i] = fargs[i];
 		}
-		for (int i = nargs.length; i < retval.length; i++) {
-			retval[i] = fargs[i - nargs.length];
+		for (int i = fargs.length; i < retval.length; i++) {
+			retval[i] = nargs[i - fargs.length];
 		}
 		if (fargs.length != cmd[cmdI].getNumFixedArgs() || (cmd[cmdI].hasNArgs() && nargs.length == 0)) {
 			createError();
@@ -110,10 +111,10 @@ public class InputProcessor<J extends FileProcessor<K, V>, K extends DataType, V
 		for (int i = 0; i < cmd.length; i++) {
 			int j = i +1;
 			System.err.println("Set of arguments ("+j+") are for: "+cmd[i].getClass().getName());
+			System.err.println("First, input the fixed arguments, it takes: "+cmd[i].getNumFixedArgs()+" arguments");
 			if (cmd[i].hasNArgs()) {
-				System.err.println("First, please input the required NArgs, followed by: "+boundDetection);
+				System.err.println("Next, please input the required NArgs, followed by: "+boundDetection);
 			}
-			System.err.println("After, input the fixed arguments, it takes: "+cmd[i].getNumFixedArgs()+" arguments");
 			System.err.println("Construction Message: "+cmd[i].getConstructionErrorMsg());
 			if (i != cmd.length-1 && cmd[i].getClass().equals(cmd[i+1].getClass())) {
 				System.err.println("If arguments are NOT specified for: "+cmd[i+1].getClass().getName()+", system will attempt to repeat arguments");
