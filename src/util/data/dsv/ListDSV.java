@@ -10,6 +10,8 @@ import java.util.List;
 import filter.Filterable;
 import util.sys.DataType;
 import util.sys.FileWritable;
+import java.util.regex.Pattern;
+
 
 //delimiter separated values
 public class ListDSV extends ArrayList<List<String>> implements Filterable<List<String>> {
@@ -21,33 +23,54 @@ public class ListDSV extends ArrayList<List<String>> implements Filterable<List<
 		this.headers = null;
 		this.splitter = null;
 	}
-	public ListDSV(String splitter) {
+	//fill columns past where there's data with empty strings
+	public ListDSV(String splitter, boolean fill) {
 		super();
 		this.splitter = splitter;
+	}
+	public ListDSV(String splitter) {
+		this(splitter, true);
 	}
 	private static final long serialVersionUID = -4843965415284440893L;
 	private List<String> headers;
 	private final String splitter;
-	public static ListDSV fromFile(File f, String splitter) throws IOException {
+	public static ListDSV fromFile(File f, String splitter, boolean fill) throws IOException {
 		List<String> lines = Files.readAllLines(f.toPath());
 		if (lines.isEmpty()) {
 			throw new IllegalArgumentException(f + " doesn't contain any data");
 		}
 		String headers = lines.get(0);
 		List<String> heads = new ArrayList<String>();
-		for (String s : headers.split(splitter)) {
+		//String litsplit = Pattern.quote(splitter);
+		String litsplit = splitter;
+		for (String s : headers.split(litsplit)) {
 			heads.add(s);
+		}
+		if (heads.size() <= 1) {
+			System.err.println("WARNING: only one header detected.");
+			System.err.println(headers);
+			System.err.println("Delimiter is: "+litsplit+".");
 		}
 		ListDSV toret = new ListDSV(heads, splitter);
 		for (int i = 1; i < lines.size(); i++) {
 			toret.add(new ArrayList<String>());
-			for (String s : lines.get(i).split(splitter)) {
+			for (String s : lines.get(i).split(litsplit)) {
 				toret.get(i-1).add(s);
+			}
+			if (toret.get(i-1).size() != heads.size() && !fill) {
+				System.err.println("Missing or extra data around line: "+i+"; line: "+lines.get(i));
+				throw new IllegalArgumentException();
+			}
+			else if (toret.get(i-1).size() < heads.size()) {
+				for (int j = toret.get(i-1).size(); j < heads.size(); j++) {
+					toret.get(i-1).add("");
+				}
 			}
 		}
 		return toret;
 	}
 	private ListDSV(List<String> heads, String splitter) {
+		super();
 		this.headers = heads;
 		this.splitter = splitter;
 	}
@@ -75,6 +98,8 @@ public class ListDSV extends ArrayList<List<String>> implements Filterable<List<
 				return i;
 			}
 		}
+		System.err.println("WARN: Header: "+header+" was not found.");
+		System.err.println("All Headers: "+headers);
 		return -1;
 	}
 	

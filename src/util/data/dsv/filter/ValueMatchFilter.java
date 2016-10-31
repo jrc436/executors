@@ -2,6 +2,7 @@ package util.data.dsv.filter;
 
 import java.util.List;
 import java.util.Set;
+import java.lang.IllegalArgumentException;
 
 import filter.FilterFunction;
 import filter.Filterable;
@@ -37,6 +38,14 @@ public class ValueMatchFilter extends GenericFilter<List<String>, ListDSV> {
 	}
 	
 	private boolean filterFunction(List<String> s, int columnIndex) {
+		if (s.size() <= columnIndex || columnIndex < 0) {
+			System.err.println("Requesting a non-present index!");
+			System.err.println("List: "+s+"; index: "+columnIndex);
+			if (columnName != null) {
+				System.err.println("Requested column name: "+columnName);
+			}
+			throw new IllegalArgumentException();
+		}
 		return desiredValues.contains(s.get(columnIndex));
 	}
 	private FilterFunction<List<String>> getFilter(int columnIndex) {

@@ -22,7 +22,7 @@ public class DSVSplitter extends BigDataSplitter<ListDSV> {
 			return null;
 		}
 		try {
-			return ListDSV.fromFile(f, delim);
+			return ListDSV.fromFile(f, delim, true);
 		} catch (IOException e) {
 			e.printStackTrace();
 			System.exit(1);

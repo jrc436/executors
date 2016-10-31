@@ -11,10 +11,12 @@ import util.sys.FileProcessor;
 public class DSVFilterProcessor extends FileProcessor<ListDSV, ListDSV> {
 	private final String delimiter;
 	private final ValueMatchFilter vmf;
+	private final boolean fill;
 	public DSVFilterProcessor() {
 		super();
 		this.vmf = null;
 		this.delimiter = null;
+		this.fill = true;
 	}
 	public DSVFilterProcessor(String input, String output, String[] args) {
 		super(input, output, new ListDSV(args[0]));		
@@ -25,11 +27,12 @@ public class DSVFilterProcessor extends FileProcessor<ListDSV, ListDSV> {
 			acceptableValues.add(args[i]);
 		}
 		this.vmf = new ValueMatchFilter(column, acceptableValues);
+		this.fill = !Boolean.parseBoolean(args[2]);
 	}
 	
 	@Override
 	public int getNumFixedArgs() {
-		return 2;
+		return 3;
 	}
 
 	@Override
@@ -39,7 +42,7 @@ public class DSVFilterProcessor extends FileProcessor<ListDSV, ListDSV> {
 
 	@Override
 	public String getConstructionErrorMsg() {
-		return "DSVFilterProcessor will first take the delimiter, then the name of the column that's being filtered, and then the acceptable values as NARGS.";
+		return "DSVFilterProcessor will first take the delimiter, then the name of the column that's being filtered, then true/false if the data has missing values, and then the acceptable values as NARGS.";
 	}
 
 	@Override
@@ -49,7 +52,7 @@ public class DSVFilterProcessor extends FileProcessor<ListDSV, ListDSV> {
 			return null;
 		}
 		try {
-			return ListDSV.fromFile(f, delimiter);
+			return ListDSV.fromFile(f, delimiter, fill);
 		} catch (IOException e) {
 			e.printStackTrace();
 			System.exit(1);
