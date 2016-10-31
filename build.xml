@@ -35,6 +35,7 @@
         <mkdir dir="bin"/>
         <copy includeemptydirs="false" todir="bin">
             <fileset dir="src">
+                <exclude name="**/*.launch"/>
                 <exclude name="**/*.java"/>
             </fileset>
         </copy>
@@ -78,5 +79,11 @@
     <target description="compile project with Eclipse compiler" name="build-eclipse-compiler">
         <property name="build.compiler" value="org.eclipse.jdt.core.JDTCompilerAdapter"/>
         <antcall target="build"/>
+    </target>
+    <target name="DSVFilterExecutor">
+        <java classname="util.data.dsv.filter.DSVFilterExecutor" failonerror="true" fork="yes">
+            <arg line="-n 200 /work/data/gdeltsplit/ /work/data/gdeltfilter/ \\t Source SYR END"/>
+            <classpath refid="Executors.classpath"/>
+        </java>
     </target>
 </project>
