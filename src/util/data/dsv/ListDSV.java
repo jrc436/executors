@@ -26,7 +26,7 @@ public class ListDSV extends ArrayList<List<String>> implements Filterable<List<
 	//fill columns past where there's data with empty strings
 	public ListDSV(String splitter, boolean fill) {
 		super();
-		this.splitter = splitter;
+		this.splitter = unescapeJavaString(splitter);
 	}
 	public ListDSV(String splitter) {
 		this(splitter, true);
