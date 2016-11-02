@@ -119,9 +119,9 @@ public abstract class FileProcessor<E extends DataType, V extends DataType> impl
 			lines.add(line);
 			runningChars += line.length();
 			if (runningChars > maxCharPerFile) {
-				System.err.println("Preparing to write to a file");
+				System.err.println("Preparing to write to a file (num "+fileNum+")");
 				String fileName = base+"-"+fileNum+getFileExt();
-				writeToFile(outputDir.resolve(fileName), lines, processAggregate.getHeaderLine(), processAggregate.getFooterLine());
+				writeToFile(outputDir.resolve(fileName), lines, processAggregate);
 				lines.clear();
 				runningChars = 0;
 				fileNum++;
@@ -129,20 +129,23 @@ public abstract class FileProcessor<E extends DataType, V extends DataType> impl
 		}
 		String lastFileName = fileNum == 0 ? base+getFileExt() : base+"-"+fileNum+getFileExt();
 		System.err.println("Preparing to write to final file");
-		writeToFile(outputDir.resolve(lastFileName), lines, processAggregate.getHeaderLine(), processAggregate.getFooterLine());
+		writeToFile(outputDir.resolve(lastFileName), lines, processAggregate);
 		return fileNum;
 	}
-	private void writeToFile(Path outFile, List<String> lines, String header, String footer) {
+	private void writeToFile(Path outFile, List<String> lines, V processAggregate) {
 		try {
 			FileWriter fw = new FileWriter(outFile.toFile());
-			if (header != null) {
-				fw.write(header + System.getProperty("line.separator"));
+			String head = processAggregate.getHeaderLine();
+			String foot = processAggregate.getFooterLine();
+			if (head != null) {
+				fw.write(head + System.getProperty("line.separator"));
 			}
-			for (String line : lines) {
+			for (int i = 0; i < lines.size(); i++) {
+				String line = i != lines.size()-1 ? lines.get(i) : processAggregate.editFinalLine(lines.get(i));
 				fw.write(line + System.getProperty("line.separator"));
 			}
-			if (footer != null) {
-				fw.write(footer + System.getProperty("line.separator"));
+			if (foot != null) {
+				fw.write(foot + System.getProperty("line.separator"));
 			}
 			fw.close();
 		}

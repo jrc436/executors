@@ -172,10 +172,10 @@ public class Executor<J extends FileProcessor<K, V>, K extends DataType, V exten
 				synchronized(proc.processAggregate) {
 					proc.reduce(threadAggregate);
 					this.threadAggregate = proc.getInitialThreadValue();	
-					int fn = -1;
 					synchronized(filenum) {
-						fn = filenum;
-						filenum += proc.writeData(proc.processAggregate, fn);
+						this.logMessage("Thread "+getNum()+" is preparing to write. It's starting file number is: "+filenum);
+						filenum = proc.writeData(proc.processAggregate, filenum);
+						this.logMessage("Thread "+getNum()+" has finished writing. It's ending file number is: "+filenum);
 					}
 					proc.processAggregate = proc.getInitialThreadValue();
 				}

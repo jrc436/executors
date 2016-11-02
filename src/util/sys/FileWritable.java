@@ -4,10 +4,31 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 public interface FileWritable extends IterStrings {
-	public String getFileExt();
-	public ArrayList<String> getDataWriteLines();
-	public String getHeaderLine();
-	public String getFooterLine();
+	public default String getFileExt() {
+		return ".txt";
+	}
+	public default ArrayList<String> getDataWriteLines() {
+		ArrayList<String> datalines = new ArrayList<String>();
+		Iterator<String> iter = getStringIter();
+		while (iter.hasNext()) {
+			datalines.add(iter.next());
+		}
+		return datalines;
+	}
+	public default String getHeaderLine() {
+		return null;
+	}
+	public default String getFooterLine() {
+		return null;
+	}
+	/**
+	 * sometimes the line before the footer has different properties, ala json
+	 * @param finalLine
+	 * @return
+	 */
+	public default String editFinalLine(String finalLine) {
+		return finalLine;
+	}
 	public static <K, E extends Iterable<K>> Iterator<String> iterBuilder(E obj, Stringify<K> s) {
 		Iterator<K> it = obj.iterator();
 		Iterator<String> iter = new Iterator<String>() {

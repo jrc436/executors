@@ -43,10 +43,13 @@ public class JsonList extends ArrayList<JsonReadable> implements DataType {
 	public String getHeaderLine() {
 		return "[";
 	}
-
 	@Override
 	public String getFooterLine() {
 		return "]";
+	}
+	@Override
+	public String editFinalLine(String finalLine) {
+		return finalLine.substring(0, finalLine.length()-1);
 	}
 	@Override
 	public boolean hasNArgs() {
