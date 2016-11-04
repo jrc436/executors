@@ -127,7 +127,8 @@ public abstract class FileProcessor<E extends DataType, V extends DataType> impl
 				fileNum++;
 			}
 		}
-		String lastFileName = fileNum == 0 ? base+getFileExt() : base+"-"+fileNum+getFileExt();
+		String lastFileName = base+"-"+fileNum+getFileExt();
+		fileNum++;
 		System.err.println("Preparing to write to final file");
 		writeToFile(outputDir.resolve(lastFileName), lines, processAggregate);
 		return fileNum;

@@ -39,7 +39,7 @@ public class Executor<J extends FileProcessor<K, V>, K extends DataType, V exten
 			System.err.println("To use Line Executors, the first arg should be -n");
 			System.err.println("The second arg should be the number of input files that, in their processed form, can be readily stored in memory of a single thread.");
 		}
-		int maxNumInputs = 0;
+		int maxNumInputs = -1;
 		if (cmdArgs[0].equals("-n")) {
 			try {
 				maxNumInputs = Integer.parseInt(cmdArgs[1]);
@@ -125,7 +125,7 @@ public class Executor<J extends FileProcessor<K, V>, K extends DataType, V exten
 	
 	
 	protected Executable getExecutable(int threadNum, BlockingQueue<String> messages) {//, V initialValue) {
-		return maxNumInputs <= 0 ? new ProcessWorker(threadNum, messages) : new LineWorker(threadNum, messages, maxNumInputs);
+		return maxNumInputs < 0 ? new ProcessWorker(threadNum, messages) : new LineWorker(threadNum, messages, maxNumInputs);
 	}
 	
 	//needs to be updated slightly. After N rounds of runs, N output files will be produced. 

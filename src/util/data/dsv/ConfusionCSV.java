@@ -19,9 +19,10 @@ public class ConfusionCSV<K> extends DoubleKeyMap<K, K, Integer> implements Data
 		super(Boolean.parseBoolean(symm[0]));
 	}
 	public ConfusionCSV(ConfusionCSV<K> csv) {
-		for (Pair<K, K> p : csv.keySet()) {
-			this.put(p, csv.get(p));
-		}
+		super(csv);
+//		for (Pair<K, K> p : csv.keySet()) {
+//			this.put(p, csv.get(p));
+//		}
 	}
 	private static final long serialVersionUID = -7806977361007415771L;
 

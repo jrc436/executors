@@ -16,6 +16,7 @@ public class DoubleKeyMap<E, V, K> extends HashMap<Pair<E, V>, K> {
 		this.symmetric = dkm.symmetric;
 	}
 	public DoubleKeyMap(boolean symmetric) {
+		super();
 		this.symmetric = symmetric;
 	}
 	public void put(E key1, V key2, K val) {

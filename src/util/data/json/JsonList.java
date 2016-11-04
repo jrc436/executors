@@ -68,9 +68,7 @@ public class JsonList extends ArrayList<JsonReadable> implements DataType {
 			@Override
 			public String next() {
 				String ret = jriter.next().toString();
-				if (hasNext()) {
-					ret += ",";
-				}
+				ret += ",";
 				return ret;
 			}	
 		};
