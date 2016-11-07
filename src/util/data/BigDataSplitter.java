@@ -1,11 +1,9 @@
 package util.data;
 
-import java.io.File;
-
 import util.sys.DataType;
-import util.sys.FileProcessor;
+import util.sys.LineProcessor;
 
-public abstract class BigDataSplitter<E extends DataType> extends FileProcessor<E, E> {
+public abstract class BigDataSplitter<E extends DataType> extends LineProcessor<E, E> {
 	private Integer filecounter;
 	public BigDataSplitter() {
 		filecounter = 0;
@@ -37,15 +35,4 @@ public abstract class BigDataSplitter<E extends DataType> extends FileProcessor<
 			filecounter = this.writeData(newData, filenum);;
 		}
 	}
-
-	@Override
-	public void reduce(E threadAggregate) {
-		//Do nothing. We're leaving a big ol' empty processAggregate.
-	}
-	@Override
-	public File write() {
-		//do nothing
-		return outputDir.toFile();
-	}
-	
 }

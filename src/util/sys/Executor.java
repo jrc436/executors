@@ -34,27 +34,34 @@ public class Executor<J extends FileProcessor<K, V>, K extends DataType, V exten
 			System.err.println("All Executors of any sort require the input and output directories.");
 			System.exit(1);
 		}
-		if (cmdArgs.length < 4 || !cmdArgs[0].equals("-n")) {
-			System.err.println("Warning: ProcessExecutors will be used. If you are running into memory issues, try using LineExecutors");
-			System.err.println("To use Line Executors, the first arg should be -n");
-			System.err.println("The second arg should be the number of input files that, in their processed form, can be readily stored in memory of a single thread.");
-		}
 		int maxNumInputs = -1;
-		if (cmdArgs[0].equals("-n")) {
-			try {
-				maxNumInputs = Integer.parseInt(cmdArgs[1]);
+		if (LineProcessor.class.isAssignableFrom(fp)) {
+			if (cmdArgs[0].equals("-n")) {
+				try {
+					maxNumInputs = Integer.parseInt(cmdArgs[1]);
+				}
+				catch (NumberFormatException nfe) {
+					System.err.println(cmdArgs[1] + " is not a parsable number to use as the max number of inputs");
+					nfe.printStackTrace();
+					System.exit(1);
+				}
+				String[] newArgs = new String[cmdArgs.length-2];
+				for (int i = 2; i < cmdArgs.length; i++) {
+					newArgs[i-2] = cmdArgs[i];
+				}
+				cmdArgs = newArgs;
 			}
-			catch (NumberFormatException nfe) {
-				System.err.println(cmdArgs[1] + " is not a parsable number to use as the max number of inputs");
-				nfe.printStackTrace();
+			else {
+				System.err.println("You are using a LineProcessor. The first two args should be '-n' followed by the max number of inputs a thread can process)");
 				System.exit(1);
 			}
-			String[] newArgs = new String[cmdArgs.length-2];
-			for (int i = 2; i < cmdArgs.length; i++) {
-				newArgs[i-2] = cmdArgs[i];
-			}
-			cmdArgs = newArgs;
 		}
+		else if (cmdArgs[0].equals("-n")) {
+			System.err.println("As your FileProessor does not extend LineProcessor, it cannot use LineExecutors.");
+			System.err.println("If you are running into memory issues and your process has no meaningful reduce, please have it extend LineProcessor");
+			System.exit(1);
+		}		
+		
 		this.maxNumInputs = maxNumInputs;
 		InputParse ip = new InputParse(cmdArgs);
 		InputProcessor<J, K, V> ipr = new InputProcessor<J, K, V>(fp, in, out, ip);	
@@ -154,7 +161,12 @@ public class Executor<J extends FileProcessor<K, V>, K extends DataType, V exten
 		}
 	    finally {
 	    	messages.add("Writing process beginning.");
-	    	proc.write();
+	    	try {
+	    		proc.write();
+	    	}
+	    	catch (UnsupportedOperationException uoe) {
+	    		messages.add("Process wrote using its LineProcessors, and does not need to write now");
+	    	}
 	    	messages.add("Writing process complete. Process will now terminate");
 	    }
 	}
@@ -169,16 +181,16 @@ public class Executor<J extends FileProcessor<K, V>, K extends DataType, V exten
 		}
 		private boolean tryReduce(int numInps) {
 			if (numInps > maxNumInps) {
-				synchronized(proc.processAggregate) {
-					proc.reduce(threadAggregate);
-					this.threadAggregate = proc.getInitialThreadValue();	
-					synchronized(filenum) {
-						this.logMessage("Thread "+getNum()+" is preparing to write. It's starting file number is: "+filenum);
-						filenum = proc.writeData(proc.processAggregate, filenum);
-						this.logMessage("Thread "+getNum()+" has finished writing. It's ending file number is: "+filenum);
-					}
-					proc.processAggregate = proc.getInitialThreadValue();
+				//synchronized(proc.processAggregate) {
+					//proc.reduce(threadAggregate);
+				synchronized(filenum) {
+					this.logMessage("Thread "+getNum()+" is preparing to write. It's starting file number is: "+filenum);
+					filenum = proc.writeData(proc.processAggregate, filenum);
+					this.logMessage("Thread "+getNum()+" has finished writing. It's ending file number is: "+filenum);
 				}
+				this.threadAggregate = proc.getInitialThreadValue();	
+					//proc.processAggregate = proc.getInitialThreadValue();
+				//}
 				return true;
 			}
 			return false;
