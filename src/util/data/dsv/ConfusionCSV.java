@@ -1,6 +1,5 @@
 package util.data.dsv;
 
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Set;
 
@@ -56,19 +55,19 @@ public class ConfusionCSV<K> extends DoubleKeyMap<K, K, Integer> implements Data
 		return ".csv";
 	}
 
-	@Override
-	public ArrayList<String> getDataWriteLines() {
-		ArrayList<String> lines = new ArrayList<String>();
-		for (K key2 : super.getKeysetTwo()) {
-			String line = key2.toString()+",";
-			for (K key1 : super.getPairedKeys2(key2)) {
-				line += super.get(key1, key2)+",";
-			}
-			line = line.substring(0, line.length()-1);
-			lines.add(line);
-		}
-		return lines;
-	}
+//	@Override
+//	public ArrayList<String> getDataWriteLines() {
+//		ArrayList<String> lines = new ArrayList<String>();
+//		for (K key2 : super.getKeysetTwo()) {
+//			String line = key2.toString()+",";
+//			for (K key1 : super.getPairedKeys2(key2)) {
+//				line += super.get(key1, key2)+",";
+//			}
+//			line = line.substring(0, line.length()-1);
+//			lines.add(line);
+//		}
+//		return lines;
+//	}
 
 	@Override
 	public String getHeaderLine() {
@@ -78,7 +77,7 @@ public class ConfusionCSV<K> extends DoubleKeyMap<K, K, Integer> implements Data
 //		}
 //		return line.substring(0, line.length()-1);
 		String line = "";
-		Set<K> keyset = super.getKeysetOne();
+		Set<K> keyset = super.getFullKeySet();
 		for (K key : keyset) {
 			line += key.toString() + ",";
 		}
@@ -98,7 +97,7 @@ public class ConfusionCSV<K> extends DoubleKeyMap<K, K, Integer> implements Data
 	public Iterator<String> getStringIter() {
 		final ConfusionCSV<K> outer = this;
 		Iterator<String> iter = new Iterator<String>() {
-			Iterator<K> vertLabels = outer.getKeysetTwo().iterator();
+			Iterator<K> vertLabels = outer.getFullKeySet().iterator();
 			//Set<K> keysetOne = outer.getKeysetOne();
 			public boolean hasNext() {
 				return vertLabels.hasNext();
@@ -106,7 +105,7 @@ public class ConfusionCSV<K> extends DoubleKeyMap<K, K, Integer> implements Data
 			public String next() {
 				K key2 = vertLabels.next();
 				String line = key2.toString()+",";
-				for (K key1 : outer.getKeysetOne()) {
+				for (K key1 : outer.getFullKeySet()) {
 					int shared = outer.containsKey(key1,key2) ? outer.get(key1, key2) : 0;
 					line += shared + ",";
 				}

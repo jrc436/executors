@@ -39,7 +39,18 @@ public class DoubleKeyMap<E, V, K> extends HashMap<Pair<E, V>, K> {
 		}
 		return super.get(new OrderedPair<E, V>(key1, key2));
 	}
-	
+	@SuppressWarnings("unchecked")
+	public Set<E> getFullKeySet() { 
+		Set<E> one = new HashSet<E>();
+		for (Pair<E, V> p : super.keySet()) {
+			if (p.typeTwo.getClass().isAssignableFrom(p.typeOne.getClass())) {
+				throw new UnsupportedOperationException();
+			}
+			one.add(p.typeOne);
+			one.add((E) p.typeTwo);
+		}
+		return one;
+	}
 	public Set<E> getKeysetOne() {
 		Set<E> one = new HashSet<E>();
 		for (Pair<E, V> p : super.keySet()) {
@@ -54,6 +65,7 @@ public class DoubleKeyMap<E, V, K> extends HashMap<Pair<E, V>, K> {
 		}
 		return two;
 	}
+	
 	@SuppressWarnings("unchecked")
 	public Set<V> getPairedKeys(E key1) {
 		Set<V> pairedKeys = new HashSet<V>();
