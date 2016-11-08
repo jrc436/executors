@@ -185,7 +185,7 @@ public class Executor<J extends FileProcessor<K, V>, K extends DataType, V exten
 					//proc.reduce(threadAggregate);
 				synchronized(filenum) {
 					this.logMessage("Thread "+getNum()+" is preparing to write. It's starting file number is: "+filenum);
-					filenum = proc.writeData(proc.processAggregate, filenum);
+					filenum = proc.writeData(threadAggregate, filenum);
 					this.logMessage("Thread "+getNum()+" has finished writing. It's ending file number is: "+filenum);
 				}
 				this.threadAggregate = proc.getInitialThreadValue();	

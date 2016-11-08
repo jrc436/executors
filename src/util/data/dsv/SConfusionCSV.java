@@ -12,7 +12,7 @@ public class SConfusionCSV extends ConfusionCSV<String> {
 		super(symm);
 	}
 	public SConfusionCSV() {
-		super();
+		super(true);
 	}
 	private static final long serialVersionUID = 1423511210223449087L;
 
@@ -23,4 +23,9 @@ public class SConfusionCSV extends ConfusionCSV<String> {
 	public DataType deepCopy() {
 		return new SConfusionCSV(this);
 	}	
+	
+	@Override
+	public int getNumFixedArgs() {
+		return 0;
+	}
 }

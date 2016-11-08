@@ -20,9 +20,6 @@ public class ConfusionCSV<K> extends DoubleKeyMap<K, K, Integer> implements Data
 	}
 	public ConfusionCSV(ConfusionCSV<K> csv) {
 		super(csv);
-//		for (Pair<K, K> p : csv.keySet()) {
-//			this.put(p, csv.get(p));
-//		}
 	}
 	private static final long serialVersionUID = -7806977361007415771L;
 
@@ -109,7 +106,7 @@ public class ConfusionCSV<K> extends DoubleKeyMap<K, K, Integer> implements Data
 			public String next() {
 				K key2 = vertLabels.next();
 				String line = key2.toString()+",";
-				for (K key1 : outer.getPairedKeys2(key2)) {
+				for (K key1 : outer.getKeysetOne()) {
 					int shared = outer.containsKey(key1,key2) ? outer.get(key1, key2) : 0;
 					line += shared + ",";
 				}

@@ -10,4 +10,10 @@ public abstract class Pair<K, V> {
 	public String toString() {
 		return "["+typeOne.toString()+","+typeTwo.toString()+"]";
 	}
+	public K one() {
+		return typeOne;
+	}
+	public V two() {
+		return typeTwo;
+	}
 }
