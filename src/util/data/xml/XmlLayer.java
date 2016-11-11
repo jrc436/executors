@@ -6,9 +6,9 @@ import java.io.IOException;
 import nu.xom.Builder;
 import nu.xom.ParsingException;
 import util.sys.DataType;
-import util.sys.FileProcessor;
+import util.sys.LineProcessor;
 
-public abstract class XmlLayer<E extends DataType> extends FileProcessor<XmlDocReadable, E> {
+public abstract class XmlLayer<E extends DataType> extends LineProcessor<XmlDocReadable, E> {
 	public XmlLayer() {
 		super();
 	}

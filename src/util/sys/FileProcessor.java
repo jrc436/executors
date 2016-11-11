@@ -35,6 +35,7 @@ public abstract class FileProcessor<E extends DataType, V extends DataType> impl
 		this.outputDir = Paths.get(outDir);
 		
 		if (!outputDir.toFile().isDirectory() && !outputDir.toFile().mkdirs()) {
+			System.err.println(outputDir);
 			throw new IllegalArgumentException("Output Dir should always refer to an existing directory, or a path to a createable one");
 		}
 		this.files = makeInputFileQueue(inputDir);

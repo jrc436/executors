@@ -171,6 +171,7 @@ public class Executor<J extends FileProcessor<K, V>, K extends DataType, V exten
 	    }
 	}
 	private static Integer filenum = 0;
+	private static Object lock = new Object();
 	class LineWorker extends Executable {
 		private V threadAggregate;
 		private final int maxNumInps;
@@ -183,7 +184,7 @@ public class Executor<J extends FileProcessor<K, V>, K extends DataType, V exten
 			if (numInps > maxNumInps) {
 				//synchronized(proc.processAggregate) {
 					//proc.reduce(threadAggregate);
-				synchronized(filenum) {
+				synchronized(lock) {
 					this.logMessage("Thread "+getNum()+" is preparing to write. It's starting file number is: "+filenum);
 					filenum = proc.writeData(threadAggregate, filenum);
 					this.logMessage("Thread "+getNum()+" has finished writing. It's ending file number is: "+filenum);

@@ -10,7 +10,7 @@ public class DictReformatter extends LineProcessor<PMIDict, PMIDict> {
 		super();
 	}
 	private DictReformatter(String inputDir) {
-		super(inputDir, "", new PMIDict());
+		super(inputDir, "/work/data/poop/", new PMIDict());
 	}
 	public DictReformatter(String inpDIr, String outDIr) {
 		super(inpDIr, outDIr, new PMIDict());
