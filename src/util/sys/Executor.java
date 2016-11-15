@@ -217,7 +217,7 @@ public class Executor<J extends FileProcessor<K, V>, K extends DataType, V exten
 				}
 			}
 			this.logMessage("Thread"+getNum()+" is beginning its reduce.");
-			proc.reduce(threadAggregate);
+			tryReduce(maxNumInputs+1); //has to write at least once..
 			this.logMessage("Thread"+getNum()+" is exiting.");			
 		}
 	}
