@@ -157,7 +157,11 @@ public abstract class DataCollection<E> extends IterMap<String, Collection<E>> i
 					return getKeyMarker(key);
 				}
 				else if (vals != null && vals.hasNext()) { //we're going to return, so yeah!
-					return vals.next().toString();
+					E val = vals.next();
+					if (val == null) {
+						return null;
+					}
+					return val.toString();
 				} //neither keys nor vals have a next
 				throw new NoSuchElementException();
 			}
