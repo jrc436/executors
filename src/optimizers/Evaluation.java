@@ -15,8 +15,16 @@ public class Evaluation {
 		this.score = score;
 	}
 	public String toString() {
-		return vs.toString()+":::"+score;
+		return vs.toString()+delim+score;
 	}
+	private static final String delim = ":::";
+//	public static Evaluation fromString(String s) {
+//		String[] parts = s.split(delim);
+//		if (parts.length != 2) {
+//			throw new IllegalArgumentException("String "+s+" does nto meaningfully encode a Evaluation. Not enough delims: "+delim);
+//		}
+//		
+//	}
 	public static Comparator<Evaluation> sortScores() {
 		return new Comparator<Evaluation>() {
 			public int compare(Evaluation arg1, Evaluation arg0) {

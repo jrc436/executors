@@ -1,5 +1,10 @@
 package util.data;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.util.List;
+
 import util.collections.GenericList;
 import util.sys.DataType;
 
@@ -11,6 +16,18 @@ public class DoubleList extends GenericList<Double> {
 	}
 	public DoubleList() {
 		super();
+	}
+	public DoubleList(File f) {
+		List<String> lines = null;
+		try {
+			lines = Files.readAllLines(f.toPath());
+		} catch (IOException e) {
+			e.printStackTrace();
+			System.exit(1);
+		}
+		for (String line : lines) {
+			this.add(Double.parseDouble(line));
+		}
 	}
 	@Override
 	public DataType deepCopy() {

@@ -15,6 +15,18 @@ public class EvaluationList extends GenericList<Evaluation> {
 	public EvaluationList(EvaluationList other) {
 		super(other);
 	}
+//	public EvaluationList(File f) {
+//		List<String> lines = null;
+//		try {
+//			lines = Files.readAllLines(f.toPath());
+//		} catch (IOException e) {
+//			e.printStackTrace();
+//			System.exit(1);
+//		}
+//		for (String line : lines) {
+//			this.add(Evaluation.);
+//		}
+//	}
 	@Override
 	public DataType deepCopy() {
 		return new EvaluationList(this);

@@ -23,12 +23,12 @@ public class JsonReadable extends HashMap<String, String> {
 		}
 		return value;
 	}
-	private static String stripBrackets(String value) {
-		if (value.charAt(0) == '{' && value.charAt(value.length()-1) == '}') {
-			return value.substring(1, value.length()-1);
-		}
-		return value;
-	}
+//	private static String stripBrackets(String value) {
+//		if (value.charAt(0) == '{' && value.charAt(value.length()-1) == '}') {
+//			return value.substring(1, value.length()-1);
+//		}
+//		return value;
+//	}
 	public static JsonReadable fromString(String fromString) {
 //		if (fromString.charAt(0) != '{' || fromString.charAt(fromString.length()-1) != '}') {
 //			System.err.println(fromString);

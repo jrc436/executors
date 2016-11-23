@@ -5,9 +5,9 @@ import java.lang.reflect.InvocationTargetException;
 
 import util.collections.GenericIter;
 import util.data.DoubleList;
-import util.sys.LineProcessor;
+import util.sys.FileProcessor;
 
-public class EvalRunner<K, J extends GenericIter<K>> extends LineProcessor<J, DoubleList> {
+public class EvalRunner<K, J extends GenericIter<K>> extends FileProcessor<J, DoubleList> {
 	private final Evaluator<K> ev;
 	private final Class<J> listCls;
 	public EvalRunner(String inpDir, String outDir, Evaluator<K> ev, Class<J> listCls) {

@@ -18,6 +18,7 @@ public class ValleyClimber<M, J extends FileProcessor<K, V>, K extends DataType,
 	private final EvaluationList evs;
 	private String inputPath;
 	private String outputPath;
+	private int maxFiles = -1;
 	public ValleyClimber(int gbperthread, String procName, Class<J> fp, Class<K> dt1, Class<V> dt2) {
 		super(procName, gbperthread, fp, dt1, dt2);
 		evs = new EvaluationList();
@@ -48,7 +49,7 @@ public class ValleyClimber<M, J extends FileProcessor<K, V>, K extends DataType,
 			//this is a constructor that's needed for ValleyClimbers. It's the VariableSet (for variables) + the old processor (for run constants) + inp/out dirs, obv
 			
 			try {
-				super.initializeFromProcessor(super.fp.getConstructor(String.class, String.class, super.fp, VariableSet.class).newInstance(this.inputPath, iterDir, super.getProcessor(), vs));
+				super.initializeFromProcessor(super.fp.getConstructor(String.class, String.class, super.fp, VariableSet.class).newInstance(this.inputPath, iterDir, super.getProcessor(), vs), maxFiles);
 			} catch (InstantiationException | IllegalAccessException | IllegalArgumentException
 					| InvocationTargetException | NoSuchMethodException | SecurityException e) {
 				System.err.println("The most likely reason for this error is you don't have the special ValleyClimber constructor in your FileProcessor. String inpdir, String outDir, a self-reference, and a variableset");
@@ -92,6 +93,7 @@ public class ValleyClimber<M, J extends FileProcessor<K, V>, K extends DataType,
 			if (args[2].equals("-n")) {
 				this.inputPath = args[4];
 				this.outputPath = args[5];
+				maxFiles = Integer.parseInt(args[3]);
 			}
 			else {
 				this.inputPath = args[2];

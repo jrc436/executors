@@ -181,7 +181,8 @@ public class Executor<J extends FileProcessor<K, V>, K extends DataType, V exten
 	    		proc.write();
 	    	}
 	    	catch (UnsupportedOperationException uoe) {
-			uoe.printStackTrace();
+	    		System.err.println("Possibly finished, check for errors!");
+	    		uoe.printStackTrace();
 	    		messages.add("Process wrote using its LineProcessors, should not need to write now");
 	    	}
 	    	messages.add("Writing process complete. Process will now terminate");
