@@ -1,7 +1,7 @@
 package filter;
 
-import util.sys.DataType;
+import util.collections.GenericIter;
 
-public interface Filterable<K> extends Iterable<K>, DataType {
+public interface Filterable<K> extends GenericIter<K> {
 	public void destroy(K el);
 }

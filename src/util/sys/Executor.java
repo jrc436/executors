@@ -14,11 +14,11 @@ import java.util.concurrent.TimeUnit;
 //k and v should obviously be the same classes are inp and out... just poop
 public class Executor<J extends FileProcessor<K, V>, K extends DataType, V extends DataType> {
 	private final BlockingQueue<String> messages;
-	private final int gbPerThread;
-	private final String name;
+	protected final int gbPerThread;
+	protected final String name;
 	private final Class<K> in;
-	private final Class<J> fp;
-	private final Class<V> out;
+	protected final Class<J> fp;
+	protected final Class<V> out;
 	private int maxNumInputs;
 	private J proc;
 	public Executor(String name, int gbPerThread, Class<J> fp, Class<K> inp, Class<V> out) {
@@ -29,7 +29,10 @@ public class Executor<J extends FileProcessor<K, V>, K extends DataType, V exten
 		this.out = out;
 		this.fp = fp;
 	}
-	public void initializeFromCmdLine(String[] cmdArgs) {
+	protected J getProcessor() {
+		return proc;
+	}
+	public InputParse initializeFromCmdLine(String[] cmdArgs) {
 		if (cmdArgs.length < 2) {
 			System.err.println("All Executors of any sort require the input and output directories.");
 			System.exit(1);
@@ -53,6 +56,7 @@ public class Executor<J extends FileProcessor<K, V>, K extends DataType, V exten
 			}
 			else {
 				System.err.println("You are using a LineProcessor. The first two args should be '-n' followed by the max number of inputs a thread can process)");
+				System.err.println("Instead got: arg0: "+cmdArgs[0]+" and arg1: "+cmdArgs[1]);
 				System.exit(1);
 			}
 		}
@@ -99,6 +103,16 @@ public class Executor<J extends FileProcessor<K, V>, K extends DataType, V exten
 			ipr.createError();
 		}
  		setProc(ip, ipr, args);
+ 		return ip;
+	}
+	
+	//only call these if you know what you're doing!
+	public void initializeFromProcessor(J fp, int maxNumInputs) {
+		proc = fp;
+		this.maxNumInputs = maxNumInputs;
+	}
+	public void initializeFromProcessor(J fp) {
+		initializeFromProcessor(fp, -1);
 	}
 	
 	private void setProc(InputParse ip, InputProcessor<J, K, V> ipr, String[][] args) {
@@ -134,8 +148,6 @@ public class Executor<J extends FileProcessor<K, V>, K extends DataType, V exten
 	protected Executable getExecutable(int threadNum, BlockingQueue<String> messages) {//, V initialValue) {
 		return maxNumInputs < 0 ? new ProcessWorker(threadNum, messages) : new LineWorker(threadNum, messages, maxNumInputs);
 	}
-	
-	//needs to be updated slightly. After N rounds of runs, N output files will be produced. 
 	public void run() {
 		Thread log;
 		try {

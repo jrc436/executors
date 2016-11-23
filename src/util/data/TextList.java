@@ -3,13 +3,12 @@ package util.data;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
+import util.collections.GenericList;
 import util.sys.DataType;
 
-public class TextList extends ArrayList<String> implements DataType {
+public class TextList extends GenericList<String>  {
 
 	private static final long serialVersionUID = -813807579289923749L;
 	public static TextList fromFile(File f) {
@@ -48,11 +47,6 @@ public class TextList extends ArrayList<String> implements DataType {
 	}
 
 	@Override
-	public ArrayList<String> getDataWriteLines() {
-		return this;
-	}
-
-	@Override
 	public String getHeaderLine() {
 		return null;
 	}
@@ -61,12 +55,6 @@ public class TextList extends ArrayList<String> implements DataType {
 	public String getFooterLine() {
 		return null;
 	}
-
-	@Override
-	public Iterator<String> getStringIter() {
-		return super.iterator();
-	}
-
 	@Override
 	public DataType deepCopy() {
 		return new TextList(this);

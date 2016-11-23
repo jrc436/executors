@@ -1,11 +1,11 @@
 package util.data.maps;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 
+import util.collections.GenericList;
 import util.sys.DataType;
 
-public class HeaderList extends ArrayList<String> implements DataType {
+public class HeaderList extends GenericList<String> {
 
 	public HeaderList() {
 		super();
@@ -48,11 +48,6 @@ public class HeaderList extends ArrayList<String> implements DataType {
 	@Override
 	public String getFooterLine() {
 		return null;
-	}
-
-	@Override
-	public Iterator<String> getStringIter() {
-		return this.iterator();
 	}
 
 	@Override
