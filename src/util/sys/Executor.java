@@ -39,6 +39,7 @@ public class Executor<J extends FileProcessor<K, V>, K extends DataType, V exten
 		}
 		int maxNumInputs = -1;
 		if (LineProcessor.class.isAssignableFrom(fp)) {
+			System.err.println("Using Line Processors");
 			if (cmdArgs[0].equals("-n")) {
 				try {
 					maxNumInputs = Integer.parseInt(cmdArgs[1]);
@@ -64,7 +65,10 @@ public class Executor<J extends FileProcessor<K, V>, K extends DataType, V exten
 			System.err.println("As your FileProessor does not extend LineProcessor, it cannot use LineExecutors.");
 			System.err.println("If you are running into memory issues and your process has no meaningful reduce, please have it extend LineProcessor");
 			System.exit(1);
-		}		
+		}
+		else {
+			System.err.println("Using File Processors");
+		}
 		
 		this.maxNumInputs = maxNumInputs;
 		InputParse ip = new InputParse(cmdArgs);
@@ -177,7 +181,8 @@ public class Executor<J extends FileProcessor<K, V>, K extends DataType, V exten
 	    		proc.write();
 	    	}
 	    	catch (UnsupportedOperationException uoe) {
-	    		messages.add("Process wrote using its LineProcessors, and does not need to write now");
+			uoe.printStackTrace();
+	    		messages.add("Process wrote using its LineProcessors, should not need to write now");
 	    	}
 	    	messages.add("Writing process complete. Process will now terminate");
 	    }

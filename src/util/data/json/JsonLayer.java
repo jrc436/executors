@@ -3,6 +3,7 @@ package util.data.json;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -42,6 +43,25 @@ public abstract class JsonLayer<K extends DataType> extends FileProcessor<JsonLi
 	public String getConstructionErrorMsg() {
 		return "All JsonLayers must specify the comment format of the incoming data";
 	}
+	public static JsonReadable getSingleJson(String jsonString) {
+		try {
+			JsonObject jo = Json.createReader(new StringReader(jsonString)).readObject();
+			return fromJsonObject(jo);
+		}
+		catch (javax.json.stream.JsonParsingException jpe) {
+			System.err.println(jsonString);
+			jpe.printStackTrace();
+			System.exit(1);
+		}
+		return null;
+	}
+	private static JsonReadable fromJsonObject(JsonObject jo) {
+		JsonReadable message = new JsonReadable();
+		for (String key : jo.keySet()) {
+			message.put(key, jo.get(key).toString());
+		}
+		return message;
+	}
 	public static JsonList getReadable(File f) {
 		JsonList allMessages = new JsonList();
 		FileReader fr = null;
@@ -59,14 +79,10 @@ public abstract class JsonLayer<K extends DataType> extends FileProcessor<JsonLi
 			//System.out.println("Reading JsonArray finished");
 			Iterator<JsonValue> it = ja.iterator();
 			while (it.hasNext()) {
-				JsonReadable message = new JsonReadable();
 				JsonValue jv = it.next();
 				try {
 					JsonObject jo = (JsonObject) jv;
-					for (String key : jo.keySet()) {
-						message.put(key, jo.get(key).toString());
-					}
-					allMessages.add(message);
+					allMessages.add(fromJsonObject(jo));
 				}
 				catch (Exception e) {
 					System.err.println(e);

@@ -30,24 +30,25 @@ public class JsonReadable extends HashMap<String, String> {
 		return value;
 	}
 	public static JsonReadable fromString(String fromString) {
-		if (fromString.charAt(0) != '{' || fromString.charAt(fromString.length()-1) != '}') {
-			System.err.println(fromString);
-			throw new IllegalArgumentException(fromString+ " does not appear to be a valid JSON");
-		}
-		String noBracks = stripBrackets(fromString);
-		String[] allKeys = noBracks.split(",");
-		JsonReadable toReturn = new JsonReadable();
-		for (String s : allKeys) {
-			String[] keyval = s.split(":");
-			if (keyval.length != 2) {
-				System.err.println("Formatting problem with colons:");
-				System.err.println(fromString);
-				System.err.println(s);
-				throw new IllegalArgumentException();
-			}
-			toReturn.put(keyval[0], keyval[1]);
-		}
-		return toReturn;
+//		if (fromString.charAt(0) != '{' || fromString.charAt(fromString.length()-1) != '}') {
+//			System.err.println(fromString);
+//			throw new IllegalArgumentException(fromString+ " does not appear to be a valid JSON");
+//		}
+//		String noBracks = stripBrackets(fromString);
+//		String[] allKeys = noBracks.split(",");
+//		JsonReadable toReturn = new JsonReadable();
+//		for (String s : allKeys) {
+//			String[] keyval = s.split(":");
+//			if (keyval.length != 2) {
+//				System.err.println("Formatting problem with colons:");
+//				System.err.println(fromString);
+//				System.err.println(s);
+//				throw new IllegalArgumentException();
+//			}
+//			toReturn.put(keyval[0], keyval[1]);
+//		}
+//		return toReturn;
+		return JsonLayer.getSingleJson(fromString);
 	}
 	public String toString() {
 		String ret = "";
