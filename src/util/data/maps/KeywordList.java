@@ -4,8 +4,11 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import util.data.corpus.Comment;
 import util.data.corpus.CommentFormat;
@@ -14,22 +17,19 @@ import util.sys.DataType;
 
 public class KeywordList extends DataCollection<Comment> {
 	private static final long serialVersionUID = 6441745759936713041L;
-	private final CommentFormat cf;
 	public KeywordList() { // dummy constructor
 		super();
-		this.cf = null;
 	}
 	public KeywordList(String[] keywords, CommentFormat cf) {
 		super(keywords);
-		this.cf = null;
+		this.cf = cf;
 	}
 	public KeywordList(KeywordList kl) {
 		super(kl);
 		this.cf = kl.cf;
 	}
 	public KeywordList(List<String> fileLines, CommentFormat cf) {
-		super(fileLines);
-		this.cf = cf;
+		super(fileLines, cf);
 	}
 	@Override
 	public boolean hasNArgs() {
@@ -72,8 +72,9 @@ public class KeywordList extends DataCollection<Comment> {
 		if (text.isEmpty()) {
 			return retval;
 		}
+		Set<String> words = new HashSet<String>(Arrays.asList(text.split("\\s+")));
 		for (String key : this.keySet()) {
-			if (text.contains(key)) {
+			if (words.contains(key)) {
 				retval.add(key);
 			}
 		}

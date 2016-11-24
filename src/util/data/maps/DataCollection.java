@@ -10,11 +10,12 @@ import java.util.NoSuchElementException;
 import filter.Filterable;
 import util.collections.IterMap;
 import util.data.corpus.Comment;
+import util.data.corpus.CommentFormat;
 
 public abstract class DataCollection<E> extends IterMap<String, Collection<E>> implements Filterable<Entry<String, Collection<E>>> {
 
 	private static final long serialVersionUID = 1046358937480295913L;
-	
+	protected CommentFormat cf = null;
 	public DataCollection() { // dummy constructor
 		super();
 	}
@@ -24,17 +25,13 @@ public abstract class DataCollection<E> extends IterMap<String, Collection<E>> i
 			super.put(key, getEmptyCollection());
 		}
 	}
-//	public DataCollection(CommentFormat cf) {
-//		super();
-//		this.cf = cf;
-//	}
 	public DataCollection(DataCollection<E> kl) {
 		super(kl);
 		//this.cf = kl.cf;
 	}
-	protected DataCollection(List<String> fileLines) {
+	protected DataCollection(List<String> fileLines, CommentFormat cf) {
 		super();
-		//this.cf = cf;
+		this.cf = cf;
 		if (fileLines.size() == 0 || !isKeyLine(fileLines.get(0))) {
 			throw new IllegalArgumentException("There needs to be at least one key line starting the file.");
 		}
@@ -43,18 +40,9 @@ public abstract class DataCollection<E> extends IterMap<String, Collection<E>> i
 			currentKeyLine = addLine(s, currentKeyLine);
 		}
 	}
-//	protected static String getTrailingKeyword(List<String> fileLines) {
-//		String currentKeyLine = "";
-//		if (!isKeyLine(fileLines.get(0))) {
-//			System.err.println("Warning: lines have no initial keyline");
-//		}
-//		for (String s : fileLines) {
-//			if (isKeyLine(s)) {
-//				currentKeyLine = s;
-//			}
-//		}
-//		return currentKeyLine;
-//	}
+	protected DataCollection(List<String> fileLines) {
+		this(fileLines, null);
+	}
 	public void destroy(Entry<String, Collection<E>> o) {
 		this.remove(o.getKey());
 	}
