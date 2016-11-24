@@ -9,7 +9,6 @@ public class VariableSet {
 	private final Map<VariableName, Variable> nameMap;
 	private int currentIndex;
 	private final int initIndex;
-	
 	private boolean lastSuperIterImproved;
 	
 	public VariableSet(Variable[] vars, int initIndex) {
@@ -23,7 +22,7 @@ public class VariableSet {
 		}
 		this.currentIndex = initIndex;
 		this.initIndex = initIndex;
-		this.lastSuperIterImproved = true;
+		this.lastSuperIterImproved = true;	
 	}
 	public double getValue(VariableName vn) {
 		if (!nameMap.containsKey(vn)) {
@@ -64,17 +63,21 @@ public class VariableSet {
 	}
 	
 	//return true if we've successfully incremented the index.
-	//return false if the loop should break.
+	//return false if this super iter is over and it didn't contain an improvement
 	protected boolean updateIndex(boolean curVarImproving) {
 		if (curVarImproving) {
 			return true; //don't need to update index!
 		}
 		//need to update index, we also might need to start a new superIter!
-		if (currentIndex + 1 == initIndex) {
+		if (nextIndex(currentIndex) == initIndex) {
 			return startNewSuperIter();
 		}
-		currentIndex = currentIndex + 1 == vars.length ? 0 : currentIndex + 1;
+		//0, 3, 1, 0, 
+		currentIndex = nextIndex(currentIndex);
 		return true;
+	}
+	private int nextIndex(int ind) {
+		return ind + 1 == vars.length ? 0 : ind + 1;
 	}
 	private boolean startNewSuperIter() {
 		if (!lastSuperIterImproved) {
@@ -89,7 +92,7 @@ public class VariableSet {
 	}
 	public void randomAll() {
 		for (int i = 0; i < vars.length; i++) {
-			vars[i].resetValueRandom(); //this will produce a value between 0 and 1, so it has to be normalized with the range...
+			vars[i].resetValueRandom(); 
 		}
 	}
 	protected void forceAll(double[] vals) {

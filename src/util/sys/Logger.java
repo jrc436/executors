@@ -9,6 +9,7 @@ import java.util.concurrent.BlockingQueue;
 public class Logger implements Runnable {
     private final BlockingQueue<String> messages;
     private final FileWriter fw;
+    public static final String killMessage = "DIE";
     public Logger(BlockingQueue<String> messages, String fp) throws IOException {
         this.messages = messages;
         fw = new FileWriter(new File(fp));
@@ -16,7 +17,11 @@ public class Logger implements Runnable {
     public void run() {
         while (true) {
             try {
-                    writeMessage(messages.take());
+            		String write = messages.take();
+            		if (write.equals(killMessage)) {
+            			break;
+            		}
+                    writeMessage(write);
             } catch (InterruptedException e) {
                     System.err.println("Logger has been interrupted. It has "+messages.size()+ " messages remaining at this time. Attempting to write.");
                     while (!messages.isEmpty()) {
@@ -26,6 +31,11 @@ public class Logger implements Runnable {
                     } catch (IOException e1) { }
             }
         }
+        try {
+			fw.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
     }
     private void writeMessage(String s) {
         try {

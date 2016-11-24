@@ -1,6 +1,7 @@
 package optimizers;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.HashMap;
 
 import util.collections.GenericIter;
 import util.data.DoubleList;
@@ -15,13 +16,15 @@ public class ValleyClimber<M, J extends FileProcessor<K, V>, K extends DataType,
 	//private final MassEvaluator<M, K> eval;
 	private VariableSet vs;
 	private Evaluator<M> eval;
-	private final EvaluationList evs;
+//	private final EvaluationList evs;
 	private String inputPath;
 	private String outputPath;
 	private int maxFiles = -1;
+	private final HashMap<VarValues, Double> done;
 	public ValleyClimber(int gbperthread, String procName, Class<J> fp, Class<K> dt1, Class<V> dt2) {
 		super(procName, gbperthread, fp, dt1, dt2);
-		evs = new EvaluationList();
+//		evs = new EvaluationList();
+		this.done = new HashMap<VarValues, Double>();
 	}
 	public void randomRestart() {
 		vs.randomAll();
@@ -33,6 +36,7 @@ public class ValleyClimber<M, J extends FileProcessor<K, V>, K extends DataType,
 	public void run() {
 		double currentScore = 0.0;
 		double lastScore = currentScore;
+		double bestscore = currentScore;
 		int currentIter = 1; 
 		int maxiter = 100000;
 		String iterName;
@@ -50,22 +54,25 @@ public class ValleyClimber<M, J extends FileProcessor<K, V>, K extends DataType,
 			
 			try {
 				super.initializeFromProcessor(super.fp.getConstructor(String.class, String.class, super.fp, VariableSet.class).newInstance(this.inputPath, iterDir, super.getProcessor(), vs), maxFiles);
-			} catch (InstantiationException | IllegalAccessException | IllegalArgumentException
-					| InvocationTargetException | NoSuchMethodException | SecurityException e) {
+			} catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException e) {
 				System.err.println("The most likely reason for this error is you don't have the special ValleyClimber constructor in your FileProcessor. String inpdir, String outDir, a self-reference, and a variableset");
 				e.printStackTrace();
 				System.exit(1);
 			}
-			currentScore = run(iterDir, this.outputPath + "/" + evalName);
+			VarValues check = new VarValues(this.vs.getDoubleArray());
+			currentScore = this.done.containsKey(check) ? this.done.get(check) : run(iterDir, this.outputPath + "/" + evalName);
 			boolean goodStep = currentScore <= lastScore;
-			if (goodStep) { vs.acknowledgeImprovement(); }
+			if (currentScore <= bestscore) { 
+				bestscore = currentScore;
+				vs.acknowledgeImprovement(); 
+			}
 			boolean stillMoving = vs.step(goodStep); //this checks if the variable itself is still improving
 			if (!vs.updateIndex(stillMoving)) {
-				break;
+				this.randomRestart();
 			}
 			currentIter++;
 		}
-		System.out.println("Score: "+currentScore);
+		System.out.println("Best Score: "+bestscore);
 	}
 	//startIndex refers to which variable to optimize first!
 	
@@ -81,7 +88,7 @@ public class ValleyClimber<M, J extends FileProcessor<K, V>, K extends DataType,
 		double d = runner.sumEvaluations();
 		Evaluation ev = new Evaluation(vs, d);
 		System.out.println(ev.toString());
-		evs.add(ev);
+//		evs.add(ev);
 		return d;
 	}
 	@SuppressWarnings("unchecked")

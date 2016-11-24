@@ -186,6 +186,7 @@ public class Executor<J extends FileProcessor<K, V>, K extends DataType, V exten
 	    		messages.add("Process wrote using its LineProcessors, should not need to write now");
 	    	}
 	    	messages.add("Writing process complete. Process will now terminate");
+	    	messages.add(Logger.killMessage);
 	    }
 	}
 	private static Integer filenum = 0;
