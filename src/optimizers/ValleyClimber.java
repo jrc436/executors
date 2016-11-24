@@ -60,7 +60,7 @@ public class ValleyClimber<M, J extends FileProcessor<K, V>, K extends DataType,
 				System.exit(1);
 			}
 			VarValues check = new VarValues(this.vs.getDoubleArray());
-			currentScore = this.done.containsKey(check) ? this.done.get(check) : run(iterDir, this.outputPath + "/" + evalName);
+			currentScore = this.done.containsKey(check) ? this.done.get(check) : run(iterDir, this.outputPath + "/" + evalName, evalName);
 			boolean goodStep = currentScore <= lastScore;
 			if (currentScore <= bestscore) { 
 				bestscore = currentScore;
@@ -78,7 +78,7 @@ public class ValleyClimber<M, J extends FileProcessor<K, V>, K extends DataType,
 	
 	//experiment name should be a specific run of an experiment... which should be independent of the settings
 	//and only dependent on opt
-	private double run(String inputDir, String outputDir) {
+	private double run(String inputDir, String outputDir, String name) {
 		super.run(); //run the processor, create the dats in the output folder
 		EvalRunner<M, V> runner = new EvalRunner<M, V>(inputDir, outputDir, this.eval, super.out);
 		@SuppressWarnings("unchecked")
@@ -87,7 +87,7 @@ public class ValleyClimber<M, J extends FileProcessor<K, V>, K extends DataType,
 		eval.run();
 		double d = runner.sumEvaluations();
 		Evaluation ev = new Evaluation(vs, d);
-		System.out.println(ev.toString());
+		System.out.println(name+":::"+ev.toString());
 //		evs.add(ev);
 		return d;
 	}
