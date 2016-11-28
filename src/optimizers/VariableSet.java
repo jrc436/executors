@@ -12,6 +12,9 @@ public class VariableSet {
 	private boolean lastSuperIterImproved;
 	
 	public VariableSet(Variable[] vars, int initIndex) {
+		if (vars.length == 0) {
+			throw new IllegalArgumentException("A zero length VariableSet isn't much of a set.");
+		}
 		this.vars = vars;
 		this.nameMap = new HashMap<VariableName, Variable>();
 		for (Variable v : vars) {
@@ -31,29 +34,34 @@ public class VariableSet {
 		}
 		return nameMap.get(vn).getCurrentValue();
 	}
+	public String getVarName(int ind) {
+		return vars[ind].getName().toString();
+	}
 	public VariableSet(Variable[] vars) {
 		this(vars, new Random().nextInt(vars.length));
+	}
+	public boolean checkLastSuperIterImproved() {
+		return this.lastSuperIterImproved;
 	}
 	public void acknowledgeImprovement() {
 		this.lastSuperIterImproved = true;
 	}
-	public boolean step(boolean lastStepGood) {
-		boolean toReturn = false;
-		if (vars.length != 0) {
-			try {
-				toReturn = vars[currentIndex].step(lastStepGood);
-			}
-			catch (Exception e) {
-				e.printStackTrace();
-				System.err.println("Inconsistent settlement!!");
-				System.exit(1);
-			}
+	public int getStartingIndex() {
+		if (currentIndex != initIndex) {
+			System.out.println("WARN: current index is no longer starting index, cur:"+currentIndex+"; start:"+initIndex);
 		}
-		return toReturn; 
+		return initIndex;
 	}
-	protected Variable[] getVarArray() {
-		return this.vars;
+	public boolean tryStep(boolean lastStepGood) {
+		return vars[currentIndex].tryStep(lastStepGood);
+		
 	}
+	public int getNumVars() {
+		return vars.length;
+	}
+	//protected Variable[] getVarArray() {
+	//	return this.vars;
+	//}
 	public double[] getDoubleArray() {
 		double[] d = new double[vars.length];
 		for (int i = 0; i < vars.length; i++) {
@@ -61,39 +69,49 @@ public class VariableSet {
 		}
 		return d;
 	}
+//	public int getCurIndex() {
+//		return currentIndex;
+//	}
 	
 	//return true if we've successfully incremented the index.
 	//return false if this super iter is over and it didn't contain an improvement
-	protected boolean updateIndex(boolean curVarImproving) {
-		if (curVarImproving) {
-			return true; //don't need to update index!
-		}
+	protected int updateIndex() {
+		this.currentIndex = nextIndex(currentIndex);
+		return this.currentIndex;
+		//if (curVarImproving) {
+		//	return true; //don't need to update index!
+		//}
 		//need to update index, we also might need to start a new superIter!
-		if (nextIndex(currentIndex) == initIndex) {
-			return startNewSuperIter();
-		}
+		//if (nextIndex(currentIndex) == initIndex) {
+		//	return startNewSuperIter();
+		//}
 		//0, 3, 1, 0, 
-		currentIndex = nextIndex(currentIndex);
-		return true;
+		//currentIndex = nextIndex(currentIndex);
+		//return true;
 	}
+	public boolean onLastIndex() {
+		return nextIndex(currentIndex) == initIndex;
+	} 
 	private int nextIndex(int ind) {
 		return ind + 1 == vars.length ? 0 : ind + 1;
 	}
-	private boolean startNewSuperIter() {
-		if (!lastSuperIterImproved) {
-			return false;
-		}
+	protected int startNewSuperIter() {
+		//if (!lastSuperIterImproved) {
+		//	return false;
+		//}
 		for (Variable v : vars) {
 			v.unsettle();
 		}
 		this.currentIndex = initIndex;
 		this.lastSuperIterImproved = false; //need to check if there's an improvement again
-		return true;
+		return this.currentIndex;
 	}
-	public void randomAll() {
+	public int randomAll() {
 		for (int i = 0; i < vars.length; i++) {
 			vars[i].resetValueRandom(); 
 		}
+		this.currentIndex = initIndex;
+		return this.currentIndex;
 	}
 	protected void forceAll(double[] vals) {
 		for (int i = 0; i < vars.length; i++) {
@@ -120,8 +138,8 @@ public class VariableSet {
 	@Override
 	public String toString() {
 		String s = prefix;
-		for (Variable v : vars) {
-			s += v.toString() + varsplit;
+		for (int i = 0; i < vars.length; i++) {
+			s += vars[i].toString() + varsplit;
 		}
 		return s.substring(0, s.length()-varsplit.length()) + suffix;
 	}

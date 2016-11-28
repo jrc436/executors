@@ -16,6 +16,9 @@ public class Variable {
 	private final VariableName name;
 	public Variable(VariableName name, double initialValue, double lowerBound, double upperBound, double increment) {
 		this.name = name;
+		if (upperBound < lowerBound || initialValue > upperBound || initialValue < lowerBound) {
+			throw new IllegalArgumentException("This variable's specified initial value isn't between the bounds!");
+		}
 		this.upperBound = upperBound;
 		this.increment = increment;
 		this.lowerBound = lowerBound;
@@ -43,17 +46,25 @@ public class Variable {
 		return new Variable(VariableName.fromString(name), curval, lowerbound, upperbound, increment);
 		
 	}
+	public double normalizeInRange(double toNormalize) {
+		int numIncrements = (int) Math.round(toNormalize / increment);
+		double retval = numIncrements * increment;
+		return retval;
+	}
 	public double getCurrentValue() {
-		return this.currentValue;
+		return normalizeInRange(currentValue);
 	}
 	protected void forceCurrentValue(double newValue) {
-		this.currentValue = newValue;
+		this.currentValue = normalizeInRange(newValue);
+		this.firstRun = true;
 	}
 	protected void resetValueRandom() {
-		this.currentValue = new Random().nextDouble() * (this.lowerBound + this.upperBound);
+		double newVal = this.lowerBound + (new Random().nextDouble() * (this.upperBound-this.lowerBound));
+		this.currentValue = normalizeInRange(newVal);
+		this.unsettle();
 	}
 	//if lastvalue is not set, then goodincr doesn't matter, we'll use whatever direction (typo caught by jamie) was initially set to
-	public boolean step(boolean goodIncr) throws Exception{
+	public boolean tryStep(boolean goodIncr) {
 		if (this.firstRun) {
 			this.firstRun = false;
 			increment();
@@ -81,6 +92,7 @@ public class Variable {
 			increment();
 			return checkBounds();
 		}
+		//we return false if the variable becomes settled or it's out of bounds. In either way, this variable is done for that superiter.
 	}
 	private void settleOppositeDirection() {
 		changeDirection();
@@ -102,6 +114,7 @@ public class Variable {
 	public void unsettle() {
 		settledN = false;
 		settledP = false;
+		this.firstRun = true;
 		//see checkbounds explanation
 		if (!inBounds(this.currentValue + (direction * increment))) {
 			changeDirection();

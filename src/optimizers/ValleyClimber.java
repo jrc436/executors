@@ -26,8 +26,8 @@ public class ValleyClimber<M, J extends FileProcessor<K, V>, K extends DataType,
 //		evs = new EvaluationList();
 		this.done = new HashMap<VarValues, Double>();
 	}
-	public void randomRestart() {
-		vs.randomAll();
+	public int randomRestart() {
+		return vs.randomAll();
 	}
 	public void resetToValues(double[] vars) {
 		vs.forceAll(vars);
@@ -39,14 +39,21 @@ public class ValleyClimber<M, J extends FileProcessor<K, V>, K extends DataType,
 		double bestscore = currentScore;
 		int currentIter = 1; 
 		int maxiter = 100000;
+		//int bestiter = 1;
 		String iterName;
 		String evalName;
 		String iterDir;
+		System.out.println("Starting run... Initial index is: "+vs.getStartingIndex()+" which refers to: "+vs.getVarName(vs.getStartingIndex()));
+		String showvs = "";
+		for (int i = 0; i < vs.getNumVars(); i++) {
+			showvs += "["+i+":"+vs.getVarName(i)+"]";
+		}
+		System.out.println("Var indices: "+showvs);
 		while (true) {
 			if (currentIter > maxiter) {
 				break;
 			}
-			iterName = super.name+"-i"+String.format("%04d", currentIter);
+			iterName = super.name+"-i"+String.format("%04d", currentIter);//bestiter); //can't keep everything, honestly...
 			evalName = "eval-"+iterName;
 			iterDir = this.outputPath + "/" +iterName;
 			lastScore = currentScore;
@@ -64,11 +71,35 @@ public class ValleyClimber<M, J extends FileProcessor<K, V>, K extends DataType,
 			boolean goodStep = currentScore <= lastScore;
 			if (currentScore <= bestscore) { 
 				bestscore = currentScore;
+				//bestiter++;
+				System.out.println("New Best Score on Iteration: "+currentIter);//+". Filed under: "+bestiter);
 				vs.acknowledgeImprovement(); 
 			}
-			boolean stillMoving = vs.step(goodStep); //this checks if the variable itself is still improving
-			if (!vs.updateIndex(stillMoving)) {
-				this.randomRestart();
+			boolean varStillMoving = vs.tryStep(goodStep); //this checks if the variable itself still has room to improve
+			if (!varStillMoving) { //something needs to change then!
+				if (vs.onLastIndex()) { //the super iter should be complete if we're on the last index and it's not still moving
+					if (vs.checkLastSuperIterImproved()) {
+						//the last super iter improved... so we can, in theory, get a bit more wiggly room
+						int newIndex = vs.startNewSuperIter();
+						System.out.println("Starting new super iter. Starting index is: "+newIndex+", which refers to: "+vs.getVarName(newIndex));
+					}
+					else {
+						//last super iter didn't improve... let's start at a random place and continue going.
+						int newIndex = this.randomRestart();
+						System.out.println("Doing a random restart. Starting index is: "+newIndex+", which refers to: "+vs.getVarName(newIndex));
+					}
+				}
+				else {
+					//all we need to do is update the index and continue with the super iter
+					int newIndex = vs.updateIndex();
+					System.out.println("Updating index. New index is: "+newIndex+", which refers to: "+vs.getVarName(newIndex));
+					//of course... if we don't step with it, then we'll do a repeat...
+					while (!vs.tryStep(goodStep)) {
+						newIndex = vs.updateIndex();
+						System.err.println("Updating index failed... this should be uncommon, but may have to do with the bounds");
+						System.err.println("Therefore, updating index again. New index is: "+newIndex+", which refers to: "+vs.getVarName(newIndex));
+					}
+				}
 			}
 			currentIter++;
 		}

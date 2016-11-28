@@ -136,7 +136,7 @@ public abstract class FileProcessor<E extends DataType, V extends DataType> impl
 	}
 	private void writeToFile(Path outFile, List<String> lines, V processAggregate) {
 		try {
-			FileWriter fw = new FileWriter(outFile.toFile());
+			FileWriter fw = new FileWriter(outFile.toFile(), false);
 			String head = processAggregate.getHeaderLine();
 			String foot = processAggregate.getFooterLine();
 			if (head != null) {

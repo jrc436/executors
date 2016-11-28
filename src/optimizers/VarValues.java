@@ -29,7 +29,8 @@ public class VarValues extends ArrayList<Double> {
 			return false;
 		}
 		for (int i = 0; i < this.size(); i++) {
-			if (this.get(i) != vv.get(i)) {
+			//should be equivalent to the hashcode
+			if (Math.abs(this.get(i) - vv.get(i)) > 0.0005) {
 				return false;
 			}
 		}
