@@ -43,8 +43,8 @@ public class DoubleKeyMap<E, V, K> extends HashMap<Pair<E, V>, K> {
 	public Set<E> getFullKeySet() { 
 		Set<E> one = new HashSet<E>();
 		for (Pair<E, V> p : super.keySet()) {
-			if (p.typeTwo.getClass().isAssignableFrom(p.typeOne.getClass())) {
-				throw new UnsupportedOperationException();
+			if (!p.typeTwo.getClass().isAssignableFrom(p.typeOne.getClass())) {
+				throw new UnsupportedOperationException("Type: "+p.typeTwo.getClass()+" does not match Type: "+p.typeOne.getClass());
 			}
 			one.add(p.typeOne);
 			one.add((E) p.typeTwo);

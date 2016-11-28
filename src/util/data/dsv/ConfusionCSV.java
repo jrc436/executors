@@ -33,14 +33,17 @@ public class ConfusionCSV<K> extends DoubleKeyMap<K, K, Integer> implements Data
 	}
 	
 	public synchronized void absorb(ConfusionCSV<K> other) {
-		for (Entry<Pair<K, K> , Integer> p : this.entrySet()) {
-			if (other.containsKey(p.getKey())) {
-				p.setValue(p.getValue()+other.get(p.getKey()));
-			}
-		}
+//		for (Entry<Pair<K, K> , Integer> p : this.entrySet()) {
+//			if (other.containsKey(p.getKey())) {
+//				p.setValue(p.getValue()+other.get(p.getKey()));
+//			}
+//		}
 		for (Entry<Pair<K, K>, Integer> p : other.entrySet()) {
 			if (!this.containsKey(p.getKey())) {
 				this.put(p.getKey(), p.getValue());
+			}
+			else {
+				this.put(p.getKey(), this.get(p.getKey())+p.getValue());
 			}
 		}
 	}

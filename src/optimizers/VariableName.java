@@ -3,6 +3,8 @@ package optimizers;
 public enum VariableName {
 	negd,
 	rt_intercept,
+	lm_corr,
+	lm_intercept,
 	recencyK,
 	cutoffK;
 	public static VariableName fromString(String arg) {
