@@ -5,17 +5,23 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Evaluation {
-	private final Map<VariableName, Double> vs;
+	//private final Map<VariableName, Double> vs;
+	private final VariableSet vs;
 	private final double score;
 	public Evaluation(VariableSet vs, double score) {
-		this.vs = new HashMap<VariableName, Double>();
-		for (Variable v : vs.getVarArray()) {
-			this.vs.put(v.getName(), v.getCurrentValue());
-		}
+		this.vs = vs;
+		//for (Variable v : vs.getVarArray()) {
+		//	this.vs.put(v.getName(), v.getCurrentValue());
+		//}
 		this.score = score;
 	}
 	public String toString() {
-		return vs.toString()+delim+score;
+		String s = "";
+		for (double d : vs.getDoubleArray()) {
+			s += d+",";
+		}
+		s += score + delim + "full:";
+		return s+vs.toString()+delim+score;
 	}
 	private static final String delim = ":::";
 //	public static Evaluation fromString(String s) {
