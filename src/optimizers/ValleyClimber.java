@@ -116,8 +116,8 @@ public class ValleyClimber<M, J extends FileProcessor<K, V>, K extends DataType,
 		Executor<EvalRunner<M, V>, V, DoubleList> eval = new Executor<EvalRunner<M, V>, V, DoubleList>("eval", super.gbPerThread, (Class<EvalRunner<M, V>>) runner.getClass(), super.out, DoubleList.class);
 		eval.initializeFromProcessor(runner);
 		eval.run();
-		double d = runner.sumAvgEvaluations();
-		Evaluation ev = new Evaluation(vs, d);
+		double d = runner.sumEvaluations();
+		Evaluation ev = new Evaluation(vs, d, runner.sumAvgEvaluations());
 		System.out.println(name+":::"+ev.toString());
 //		evs.add(ev);
 		return d;

@@ -6,11 +6,13 @@ public class Evaluation {
 	//private final Map<VariableName, Double> vs;
 	private final VariableSet vs;
 	private final double score;
-	public Evaluation(VariableSet vs, double score) {
+	private final double meanScore;
+	public Evaluation(VariableSet vs, double score, double meanScore) {
 		this.vs = vs;
 		//for (Variable v : vs.getVarArray()) {
 		//	this.vs.put(v.getName(), v.getCurrentValue());
 		//}
+		this.meanScore = meanScore;
 		this.score = score;
 	}
 	public String toString() {
@@ -18,7 +20,7 @@ public class Evaluation {
 		for (double d : vs.getDoubleArray()) {
 			s += d+",";
 		}
-		s += score + delim + "full:";
+		s += meanScore + delim + "full:";
 		return s+vs.toString()+delim+score;
 	}
 	private static final String delim = ":::";
