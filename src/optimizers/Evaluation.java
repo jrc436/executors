@@ -1,8 +1,6 @@
 package optimizers;
 
 import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Map;
 
 public class Evaluation {
 	//private final Map<VariableName, Double> vs;

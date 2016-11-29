@@ -10,6 +10,11 @@ import util.sys.FileProcessor;
 public class EvalRunner<K, J extends GenericIter<K>> extends FileProcessor<J, DoubleList> {
 	private final Evaluator<K> ev;
 	private final Class<J> listCls;
+	protected EvalRunner() {
+		super();
+		this.listCls = null;
+		this.ev = null;
+	}
 	public EvalRunner(String inpDir, String outDir, Evaluator<K> ev, Class<J> listCls) {
 		super(inpDir, outDir, new DoubleList());
 		this.ev = ev;
@@ -25,6 +30,16 @@ public class EvalRunner<K, J extends GenericIter<K>> extends FileProcessor<J, Do
 			for (double obj : processAggregate) {
 				sum += obj;
 			}
+		}
+		return sum;
+	}
+	public double sumAvgEvaluations() {
+		double sum = 0;
+		synchronized (processAggregate) {
+			for (double obj : processAggregate) {
+				sum += obj;
+			}
+			sum /= processAggregate.size();
 		}
 		return sum;
 	}
