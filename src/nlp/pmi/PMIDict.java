@@ -8,6 +8,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import nlp.util.TextNormalizer;
 import util.collections.DoubleKeyMap;
 import util.collections.Pair;
 import util.sys.DataType;
@@ -45,7 +46,7 @@ public class PMIDict extends DoubleKeyMap<String, String, Double> implements Dat
 				double parse = Double.parseDouble(realParts.get(2));
 				String part1 = realParts.get(0);
 				String part2 = realParts.get(1);
-				pmi.put(part1, part2, parse);
+				pmi.put(TextNormalizer.normalizeWord(part1), TextNormalizer.normalizeWord(part2), parse);
 			}
 			catch (NumberFormatException nfe) {
 				System.err.println("Failed to parse double, skipping: "+line);

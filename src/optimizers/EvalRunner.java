@@ -3,8 +3,8 @@ package optimizers;
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 
-import util.collections.GenericIter;
 import util.data.DoubleList;
+import util.generic.data.GenericIter;
 import util.sys.FileProcessor;
 
 public class EvalRunner<K, J extends GenericIter<K>> extends FileProcessor<J, DoubleList> {

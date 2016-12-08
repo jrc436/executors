@@ -1,4 +1,4 @@
-package util.collections;
+package util.generic.data;
 
 import util.sys.DataType;
 

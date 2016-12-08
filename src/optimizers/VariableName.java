@@ -5,7 +5,7 @@ public enum VariableName {
 	rt_intercept,
 	lm_corr,
 	lm_intercept,
-	percent_speaking,
+	words_per_second,
 	recencyK,
 	cutoffK;
 	public static VariableName fromString(String arg) {

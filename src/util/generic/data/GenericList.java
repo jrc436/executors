@@ -1,14 +1,13 @@
-package util.collections;
+package util.generic.data;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import util.sys.DataType;
 import util.sys.FileWritable;
 import util.sys.Stringify;
 
-public abstract class GenericList<K> extends ArrayList<K> implements DataType, Stringify<K>, GenericIter<K> {
+public abstract class GenericList<K> extends ArrayList<K> implements Stringify<K>, GenericIter<K> {
 
 	private static final long serialVersionUID = -8008918485810085716L;
 

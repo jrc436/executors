@@ -3,8 +3,8 @@ package optimizers;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 
-import util.collections.GenericIter;
 import util.data.DoubleList;
+import util.generic.data.GenericIter;
 import util.sys.DataType;
 import util.sys.Executor;
 import util.sys.FileProcessor;

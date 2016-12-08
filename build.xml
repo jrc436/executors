@@ -80,4 +80,9 @@
             <classpath refid="Executors.classpath"/>
         </java>
     </target>
+    <target name="TestModel">
+        <java classname="nlp.ngrams.TestModel" failonerror="true" fork="yes">
+            <classpath refid="Executors.classpath"/>
+        </java>
+    </target>
 </project>

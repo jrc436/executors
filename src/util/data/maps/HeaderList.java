@@ -2,7 +2,7 @@ package util.data.maps;
 
 import java.util.ArrayList;
 
-import util.collections.GenericList;
+import util.generic.data.GenericList;
 import util.sys.DataType;
 
 public class HeaderList extends GenericList<String> {

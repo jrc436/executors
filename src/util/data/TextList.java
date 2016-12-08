@@ -5,7 +5,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.util.List;
 
-import util.collections.GenericList;
+import util.generic.data.GenericList;
 import util.sys.DataType;
 
 public class TextList extends GenericList<String>  {
