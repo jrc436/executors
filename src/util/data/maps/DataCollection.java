@@ -72,7 +72,13 @@ public abstract class DataCollection<E> extends IterMap<String, Collection<E>> i
 		this.get(keyword).add(datum);
 	}
 	public void addComment(String keyword, Comment datum) {
-		add(keyword, getValue(datum));
+		try {
+			add(keyword, getValue(datum));
+		}
+		catch (UnsupportedOperationException e) {
+			System.err.println("The individual DataCollection must implement Comment-based methods by overriding the defaults");
+			throw e;
+		}
 	}
 	protected abstract Collection<E> getEmptyCollection();
 	public Collection<E> getCopyCollection(String key) {
@@ -93,18 +99,31 @@ public abstract class DataCollection<E> extends IterMap<String, Collection<E>> i
 	private static String returnFromMarker(String line) {
 		return line.substring(init.length(), line.length()-out.length());
 	}
+	@SuppressWarnings("unchecked")
 	private String addLine(String s, String currentKeyLine) {
 		if (isKeyLine(s)) {
 			super.put(returnFromMarker(s), getEmptyCollection());
 			currentKeyLine = returnFromMarker(s);
 		}
 		else {
-			super.get(currentKeyLine).add(parseValue(s));
+			E add = null;
+			try {
+				add = parseValue(s);
+			}
+			catch (UnsupportedOperationException e) {
+				add = (E) s;
+				//System.err.println("Warn: adding line directly because parseValue is unimplemented");
+			}
+			super.get(currentKeyLine).add(add);
 		}
 		return currentKeyLine;
 	}
-	protected abstract E getValue(Comment c);
-	protected abstract E parseValue(String s);
+	protected E getValue(Comment c) {
+		throw new UnsupportedOperationException();
+	}
+	protected E parseValue(String s) {
+		throw new UnsupportedOperationException();
+	}
 
 	@Override
 	public ArrayList<String> getDataWriteLines() {

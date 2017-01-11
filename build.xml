@@ -5,7 +5,7 @@
               directory with the processing instruction <?eclipse.ant.import?>
               as the first entry and export the buildfile again. --><project basedir="." default="build" name="Executors">
     <property environment="env"/>
-    <property name="SurprisalModel.location" value="../onsets/SurprisalModel"/>
+    <property name="Sociolinguistics.location" value="../sociolinguistics/Sociolinguistics"/>
     <property name="ECLIPSE_HOME" value="../../../opt/eclipse/"/>
     <property name="debuglevel" value="source,lines,vars"/>
     <property name="target" value="1.8"/>
@@ -34,7 +34,6 @@
         <mkdir dir="bin"/>
         <copy includeemptydirs="false" todir="bin">
             <fileset dir="src">
-                <exclude name="**/*.launch"/>
                 <exclude name="**/*.java"/>
             </fileset>
         </copy>
@@ -53,8 +52,8 @@
         </javac>
     </target>
     <target description="Build all projects which reference this project. Useful to propagate changes." name="build-refprojects">
-        <ant antfile="build.xml" dir="${SurprisalModel.location}" inheritAll="false" target="clean"/>
-        <ant antfile="build.xml" dir="${SurprisalModel.location}" inheritAll="false" target="build">
+        <ant antfile="build.xml" dir="${Sociolinguistics.location}" inheritAll="false" target="clean"/>
+        <ant antfile="build.xml" dir="${Sociolinguistics.location}" inheritAll="false" target="build">
             <propertyset>
                 <propertyref name="build.compiler"/>
             </propertyset>
@@ -73,15 +72,16 @@
         <property name="build.compiler" value="org.eclipse.jdt.core.JDTCompilerAdapter"/>
         <antcall target="build"/>
     </target>
-    <target name="ReformatExecutor">
-        <java classname="nlp.pmi.ReformatExecutor" failonerror="true" fork="yes">
-            <jvmarg line="-Xmx15g"/>
-            <arg line="-n 1 /home/jrc436/Downloads/wiki-pmi-output/ /work/data/pmi/"/>
+    <target name="Filter">
+        <java classname="filter.Filter" failonerror="true" fork="yes">
+            <arg line="/work/research/sociolinguistics/test.file /work/research/sociolinguistics/test.output"/>
             <classpath refid="Executors.classpath"/>
         </java>
     </target>
-    <target name="TestModel">
-        <java classname="nlp.ngrams.TestModel" failonerror="true" fork="yes">
+    <target name="FilterMain">
+        <java classname="wordmap.filter.FilterMain" failonerror="true" fork="yes">
+            <jvmarg line="-Xmx12g"/>
+            <arg line="/work/data/test/wordmap.txt /work/data/test/filtermap.txt filter.DateFilter Lexical Frequency"/>
             <classpath refid="Executors.classpath"/>
         </java>
     </target>
