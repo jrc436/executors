@@ -7,7 +7,7 @@ public abstract class LineProcessor<K extends DataType, V extends DataType> exte
 		super();
 	}
 	public LineProcessor(String inpDir, String outDir) {
-		super();
+		super(inpDir, outDir);
 	}
 	public LineProcessor(String inpDir, String outDir, V startingVal) {
 		super(inpDir, outDir, startingVal);
