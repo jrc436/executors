@@ -1,7 +1,7 @@
 package util.collections;
 
-class OrderedPair<E, V> extends Pair<E, V> {
-	protected OrderedPair(E typeOne, V typeTwo) {
+public class OrderedPair<E, V> extends Pair<E, V> {
+	public OrderedPair(E typeOne, V typeTwo) {
 		super(typeOne, typeTwo);
 	}
 	@Override

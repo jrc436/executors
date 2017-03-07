@@ -31,7 +31,12 @@ public abstract class GenericMap<K, V> extends IterMap<K, V> implements GenericI
 	public String getConstructionErrorMsg() {
 		return "GenericMaps in general don't require any further arguments, but this could be not fully specified";
 	}
-	protected abstract String entryString(Entry<K, V> ent);
+	protected String separator() {
+		return "::";
+	}
+	protected String entryString(Entry<K, V> ent) {
+		return ent.getKey() + separator() + ent.getValue();
+	}
 	@Override
 	public Iterator<String> getStringIter() {
 		 return FileWritable.<Entry<K, V>, Set<Entry<K, V>>>iterBuilder(this.entrySet(), this::entryString);

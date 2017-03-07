@@ -5,35 +5,40 @@
               directory with the processing instruction <?eclipse.ant.import?>
               as the first entry and export the buildfile again. --><project basedir="." default="build" name="Executors">
     <property environment="env"/>
-    <property name="Sociolinguistics.location" value="../sociolinguistics/Sociolinguistics"/>
-    <property name="ECLIPSE_HOME" value="../../../opt/eclipse/"/>
+    <property name="src.link" value="../src"/>
+    <property name="JRE_LIB" value="../../../../../Program Files/Java/jre1.8.0_121/lib/rt.jar"/>
+    <property name="Sociolinguistics.location" value="../../sociolinguistics/Sociolinguistics/Sociolinguistics"/>
     <property name="debuglevel" value="source,lines,vars"/>
     <property name="target" value="1.8"/>
     <property name="source" value="1.8"/>
+    <path id="Persisted container [C:/cygwin64/home/drdea/executors/bin for project [Executors]].libraryclasspath"/>
     <path id="Executors.classpath">
         <pathelement location="bin"/>
-        <pathelement location="lib/ejml.jar"/>
-        <pathelement location="lib/ejml.src.zip"/>
-        <pathelement location="lib/javax.json.jar"/>
-        <pathelement location="lib/javax.json.src.jar"/>
-        <pathelement location="lib/joda-time.jar"/>
-        <pathelement location="lib/joda-time.src.jar"/>
-        <pathelement location="lib/jollyday.jar"/>
-        <pathelement location="lib/jollyday.src.jar"/>
-        <pathelement location="lib/protobuf.jar"/>
-        <pathelement location="lib/slf4j-api.jar"/>
-        <pathelement location="lib/slf4j-simple.jar"/>
-        <pathelement location="lib/stanford.corenlp.jar"/>
-        <pathelement location="lib/stanford.corenlp.javadoc.jar"/>
-        <pathelement location="lib/stanford.corenlp.models.jar"/>
-        <pathelement location="lib/stanford.corenlp.src.jar"/>
-        <pathelement location="lib/xom.jar"/>
-        <pathelement location="lib/xom.src.jar"/>
+        <pathelement location="${JRE_LIB}"/>
+        <path refid="Persisted container [C:/cygwin64/home/drdea/executors/bin for project [Executors]].libraryclasspath"/>
+        <pathelement location="../lib/ejml.jar"/>
+        <pathelement location="../lib/ejml.src.zip"/>
+        <pathelement location="../lib/javax.json.jar"/>
+        <pathelement location="../lib/javax.json.src.jar"/>
+        <pathelement location="../lib/joda-time.jar"/>
+        <pathelement location="../lib/joda-time.src.jar"/>
+        <pathelement location="../lib/jollyday.jar"/>
+        <pathelement location="../lib/jollyday.src.jar"/>
+        <pathelement location="../lib/protobuf.jar"/>
+        <pathelement location="../lib/slf4j-api.jar"/>
+        <pathelement location="../lib/slf4j-simple.jar"/>
+        <pathelement location="../lib/stanford.corenlp.jar"/>
+        <pathelement location="../lib/stanford.corenlp.javadoc.jar"/>
+        <pathelement location="../lib/stanford.corenlp.models.jar"/>
+        <pathelement location="../lib/stanford.corenlp.src.jar"/>
+        <pathelement location="../lib/xom.jar"/>
+        <pathelement location="../lib/xom.src.jar"/>
     </path>
     <target name="init">
         <mkdir dir="bin"/>
         <copy includeemptydirs="false" todir="bin">
-            <fileset dir="src">
+            <fileset dir="${src.link}">
+                <exclude name="**/*.launch"/>
                 <exclude name="**/*.java"/>
             </fileset>
         </copy>
@@ -47,7 +52,7 @@
     <target depends="init" name="build-project">
         <echo message="${ant.project.name}: ${ant.file}"/>
         <javac debug="true" debuglevel="${debuglevel}" destdir="bin" includeantruntime="false" source="${source}" target="${target}">
-            <src path="src"/>
+            <src path="${src.link}"/>
             <classpath refid="Executors.classpath"/>
         </javac>
     </target>
@@ -71,18 +76,5 @@
     <target description="compile project with Eclipse compiler" name="build-eclipse-compiler">
         <property name="build.compiler" value="org.eclipse.jdt.core.JDTCompilerAdapter"/>
         <antcall target="build"/>
-    </target>
-    <target name="Filter">
-        <java classname="filter.Filter" failonerror="true" fork="yes">
-            <arg line="/work/research/sociolinguistics/test.file /work/research/sociolinguistics/test.output"/>
-            <classpath refid="Executors.classpath"/>
-        </java>
-    </target>
-    <target name="FilterMain">
-        <java classname="wordmap.filter.FilterMain" failonerror="true" fork="yes">
-            <jvmarg line="-Xmx12g"/>
-            <arg line="/work/data/test/wordmap.txt /work/data/test/filtermap.txt filter.DateFilter Lexical Frequency"/>
-            <classpath refid="Executors.classpath"/>
-        </java>
     </target>
 </project>
