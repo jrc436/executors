@@ -3,6 +3,7 @@ package util.data.json;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.IOException;
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -91,13 +92,18 @@ public abstract class JsonLayer<K extends DataType> extends FileProcessor<JsonLi
 					System.exit(1);
 				}
 			}
+			fr.close();
 		}
 		catch (javax.json.stream.JsonParsingException jpe) {
 			System.err.println(f.toPath());
 			System.err.println(jpe.getMessage());
 			jpe.printStackTrace();
 			System.exit(1);
+		} catch (IOException e) {
+			e.printStackTrace();
+			System.exit(1);
 		}
+		
 	//	System.out.println("Transformed into Map finished");
 		return allMessages;
 	}
