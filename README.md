@@ -3,7 +3,7 @@ a relatively generic system for analyzing big data
 
 I open-sourced this more because I couldn't think of a valid reason to maintain a private repository for what's essentially
 utility code. It's not really necessarily ready for public use, in that the documentation probably makes more sense to me
-than to anyone else.
+than to anyone else. This code has basically been built and updated over time as the functions that were shared across research projects grew. 
 
 The important point to remember, if you want to try to use the code, is that the program considers all big data processing
 as data conversion. Sometimes, that's turning a corpus into a language model, other times it's extracting a feature set. Due
