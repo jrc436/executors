@@ -27,6 +27,9 @@ public class DoubleKeyMap<E, V, K> extends HashMap<Pair<E, V>, K> {
 			super.put(new OrderedPair<E, V>(key1, key2), val);
 		}
 	}
+	public boolean isSymmetric() {
+		return symmetric;
+	}
 	public boolean containsKey(E key1, V key2) {
 		if (symmetric) {
 			return super.containsKey(new UnorderedPair<E, V>(key1, key2));
