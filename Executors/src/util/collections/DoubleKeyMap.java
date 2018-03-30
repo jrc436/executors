@@ -27,8 +27,32 @@ public class DoubleKeyMap<E, V, K> extends HashMap<Pair<E, V>, K> {
 			super.put(new OrderedPair<E, V>(key1, key2), val);
 		}
 	}
-	public boolean isSymmetric() {
+	protected boolean isSymmetric() {
 		return symmetric;
+	}
+	public void remove(E key1, V key2, boolean pairedRemove) {
+		if (symmetric) {
+			if (pairedRemove) {
+				super.remove(new UnorderedPair<V, E>(key2, key1));
+			}
+			super.remove(new UnorderedPair<E, V>(key1, key2));
+		}
+		else {
+			if (pairedRemove) {
+				super.remove(new OrderedPair<V, E>(key2, key1));
+			}
+			super.remove(new OrderedPair<E, V>(key1, key2));
+		}
+	}
+	public void purgeKey(E key1) {
+		for (V key : this.getPairedKeys(key1)) {
+			this.remove(key1, key, false);
+		}
+	}
+	public void purgeKey2(V key2) {
+		for (E key : this.getPairedKeys2(key2)) {
+			this.remove(key, key2, false);
+		}
 	}
 	public boolean containsKey(E key1, V key2) {
 		if (symmetric) {

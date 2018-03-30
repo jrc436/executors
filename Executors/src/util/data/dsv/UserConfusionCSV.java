@@ -52,9 +52,10 @@ public class UserConfusionCSV extends ConfusionCSV<String> {
 		for (int i = 1; i < lines.size(); i++) {
 			String[] confusion = lines.get(i).split(",");
 			String sub1 = confusion[0];
-			if (confusion.length != subreds.length) {
+			if (confusion.length-1 != subreds.length) {
 				System.err.println(lines.get(i));
-				throw new RuntimeException("logical error, confusion length is "+confusion.length+" but subreds length is "+subreds.length);
+				System.err.println(f);
+				throw new RuntimeException("logical error, confusion length is "+(confusion.length-1)+" but subreds length is "+subreds.length);
 			}
 			for (int j = 1; j < subreds.length; j++) {
 				ucc.put(sub1, subreds[j], Integer.parseInt(confusion[j]));

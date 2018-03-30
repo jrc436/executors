@@ -49,18 +49,27 @@ public class DictReformatter extends LineProcessor<PMIDict, PMIDict> {
 	public static PMIDict readOversizeDict(String inputDir) {
 		DictReformatter dr = new DictReformatter(inputDir);
 		PMIDict oversize = new PMIDict();
+		System.out.println("Beginning PMI absorption");
+		int i = 0;
+		int j = 1;
 		while (true) {
 			File fappend = dr.getNextFile();
 			if (fappend == null) {
 				break;
 			}
 			try {
+				if (i % j == 0) {
+					System.out.println("Absorbed PMI file: "+i);
+					j *= 2;
+				}
 				oversize.fastAbsorb(PMIDict.fromFile(fappend));
+				i++;
 			} catch (IOException e) {
 				e.printStackTrace();
 				System.exit(1);
 			}
 		}
+		System.out.println("PMI absorption complete");
 		return oversize;
 	}
 
